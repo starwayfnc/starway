@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Due List</title>
+  <script src="auth.js"></script>
+  <style>
+    :root {
+      --bg-color: #1e2026;
+      --card-bg: #282a36;
+      --accent-color: #38bdf8;
+      --text-main: #f8f8f2;
+      --text-muted: #94a3b8;
+      --border-color: #3b3e4a;
+      --table-header-bg: #1f2937;
+      --row-hover-bg: #333644;
+      --banner-bg: #111827;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px; /* Matched to the Payment Collection card width */
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 1px solid var(--border-color);
+      box-sizing: border-box;
+    }
+
+    /* Home Button Styles */
+    .home-btn-container {
+      margin-bottom: 24px;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background-color: #2b3548;
+      color: #94a3b8;
+      border: 1px solid #3b475d;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .home-btn:hover {
+      background-color: #374151;
+      color: #f8fafc;
+      border-color: var(--accent-color);
+    }
+
+    .home-btn:active {
+      transform: translateY(1px);
+    }
+
+    .header-title {
+      color: var(--accent-color);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-banner {
+      background-color: var(--banner-bg);
+      color: #ffffff;
+      padding: 8px 12px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      border-left: 4px solid var(--accent-color);
+      margin-top: 24px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+
+    table {
+      width: 100%;
+      white-space: nowrap; /* Keeps columns neatly formatted */
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background-color: var(--table-header-bg);
+      color: var(--accent-color);
+      text-align: left;
+      padding: 10px;
+      font-weight: 600;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    tr:hover {
+      background-color: var(--row-hover-bg);
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Home Button inside the Card -->
+  <div class="home-btn-container">
+    <button type="button" class="home-btn" onclick="window.location.href='index.html'">
+      🏠 Home Dashboard
+    </button>
+  </div>
+
+  <!-- Main Card Header -->
+  <div class="header-title">
+    💳 Payment Due List
+  </div>
+
+  <!-- Dynamic Content -->
+  <div id="due-content">
+    <div class="loading">Loading active payment dues from database...</div>
+  </div>
+</div>
+
+<script>
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOXSqV7odExw90aOMLG2dVq-t6P6JAl6BBDzTlF2Ybxdokr3zXP7Q7D5b_ZIDEz_SZIA/exec';
+
+  async function loadPaymentDues() {
+    try {
+      const fetchUrl = APPS_SCRIPT_URL + '?action=duelist';
+      const response = await fetch(fetchUrl);
+      const rows = await response.json();
+      parseAndRenderData(rows);
+    } catch (error) {
+      console.error(error);
+      document.getElementById('due-content').innerHTML = `
+        <div style="color: #ef4444; text-align: center; padding: 20px;">
+          Failed to load live data. Please check connection.
+        </div>`;
+    }
+  }
+
+  function parseAndRenderData(rows) {
+    const container = document.getElementById('due-content');
+    container.innerHTML = '';
+
+    if (!rows || rows.length === 0) {
+      container.innerHTML = `<div class="loading">No data found.</div>`;
+      return;
+    }
+
+    let html = '';
+    let currentTableOpen = false;
+
+    rows.forEach(row => {
+      const firstCell = row[0] ? String(row[0]).trim() : '';
+
+      // Section Banners
+      if (!row[1] && !row[2] && !row[3] && !row[4] && firstCell && !firstCell.toLowerCase().includes('no ')) {
+        if (currentTableOpen) {
+          html += `</tbody></table></div>`;
+          currentTableOpen = false;
+        }
+        html += `<div class="section-banner">${firstCell}</div>`;
+        return;
+      }
+
+      // Table Headers
+      if (firstCell.toLowerCase() === 'borrower name') {
+        if (currentTableOpen) {
+          html += `</tbody></table></div>`;
+        }
+        html += `
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>${row[0] || ''}</th>
+                  <th>${row[1] || ''}</th>
+                  <th class="text-right">${row[2] || ''}</th>
+                  <th class="text-right">${row[3] || ''}</th>
+                  <th>${row[4] || ''}</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+        currentTableOpen = true;
+        return;
+      }
+
+      // Data Rows
+      if (currentTableOpen) {
+        if (!row[1] && !row[2] && !row[3] && !row[4]) {
+          html += `
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted); font-style: italic; padding: 15px;">
+                ${firstCell}
+              </td>
+            </tr>
+          `;
+        } else {
+          html += `
+            <tr>
+              <td>${row[0] || ''}</td>
+              <td>${row[1] || ''}</td>
+              <td class="text-right">${row[2] || ''}</td>
+              <td class="text-right">${row[3] || ''}</td>
+              <td>${row[4] || ''}</td>
+            </tr>
+          `;
+        }
+      }
+    });
+
+    if (currentTableOpen) {
+      html += `</tbody></table></div>`;
+    }
+
+    container.innerHTML = html;
+  }
+
+  loadPaymentDues();
+  setInterval(loadPaymentDues, 300000); // Auto-refresh every 5 mins
+</script>
+
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Customer Registration</title>
+ <script src="auth.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1d24;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 30px 0;
+      color: #e2e8f0;
+    }
+
+    .card {
+      background: #222632;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid #2d3343;
+      box-sizing: border-box;
+    }
+
+    .home-btn-container {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background-color: #2d3343;
+      color: #94a3b8;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background-color: #374151;
+      color: #f8fafc;
+    }
+
+    .home-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #38bdf8;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .section-divider {
+      border: 0;
+      border-top: 1px solid #334155;
+      margin: 20px 0 15px 0;
+    }
+
+    .section-title {
+      color: #38bdf8;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      background-color: #181b22;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+      color: #f8fafc;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    input[readonly] {
+      background-color: #14161c;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button[type="submit"], button[type="button"].clear-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button[type="submit"] {
+      background-color: #38bdf8;
+      color: #0f172a;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #0ea5e9;
+    }
+
+    button[type="button"].clear-btn {
+      background-color: #2d3343;
+      color: #94a3b8;
+      border: 1px solid #475569;
+    }
+
+    button[type="button"].clear-btn:hover {
+      background-color: #374151;
+      color: #f8fafc;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #status {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="home-btn-container">
+    <button type="button" class="home-btn" onclick="window.location.href='index.html'">&#127968; Home Dashboard</button>
+  </div>
+  
+  <h2>&#128221; New Customer Registration</h2>
+
+  <form id="customerForm">
+    <div class="form-group">
+      <label for="joinDate">Join Date</label>
+      <input type="date" id="joinDate" required>
+    </div>
+
+    <div class="form-group">
+      <label for="borrowerName">Full Name as per Aadhaar Card</label>
+      <input type="text" id="borrowerName" required placeholder="Enter exact name as per Aadhaar">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="phoneNum">Mobile Number</label>
+        <input type="tel" id="phoneNum" required maxlength="10" placeholder="e.g., 9876543210">
+      </div>
+
+      <div class="form-group">
+        <label for="waNumber">WA Number</label>
+        <input type="tel" id="waNumber" maxlength="10" placeholder="If different">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="aadhaar">Cust. Aadhaar (12 digits)</label>
+      <input type="text" id="aadhaar" required maxlength="14" placeholder="XXXX XXXX XXXX">
+    </div>
+
+    <div class="form-group">
+      <label for="nickName">Nick Name / Identity</label>
+      <input type="text" id="nickName" placeholder="Optional identifier (e.g., C/O Name, Shop)">
+    </div>
+
+    <hr class="section-divider">
+    <div class="section-title">&#128205; Address Details</div>
+
+    <div class="form-group">
+      <label for="careOf">Care Of (C/O, W/O, S/O)</label>
+      <input type="text" id="careOf" placeholder="e.g., S/O Rajan or W/O Suresh">
+    </div>
+
+    <div class="form-group">
+      <label for="houseName">House Name</label>
+      <input type="text" id="houseName" required placeholder="Enter House Name">
+    </div>
+
+    <div class="form-group">
+      <label for="streetName">Street Name / Place</label>
+      <input type="text" id="streetName" required placeholder="e.g., Thanniyam, Karuvankulam">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="postOffice">Post Office</label>
+        <input type="text" id="postOffice" required placeholder="e.g., Peringottukara">
+      </div>
+
+      <div class="form-group">
+        <label for="pinCode">Pin Code</label>
+        <input type="tel" id="pinCode" required maxlength="6" placeholder="e.g., 680565">
+      </div>
+    </div>
+
+    <hr class="section-divider">
+    <div class="section-title">&#129309; Introduced By</div>
+
+    <div class="form-group">
+      <label for="guarantorSelect">Name</label>
+      <select id="guarantorSelect" required>
+        <option value="">-- Loading Names... --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="guarantorPhone">Guarantor Ph. No. (Auto-filled in Col O)</label>
+      <input type="tel" id="guarantorPhone" readonly placeholder="Auto-filled for reference">
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="clear-btn" onclick="resetCustomerForm()">Clear</button>
+      <button type="submit" id="submitBtn">Save Customer</button>
+    </div>
+  </form>
+
+  <div id="status"></div>
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOXSqV7odExw90aOMLG2dVq-t6P6JAl6BBDzTlF2Ybxdokr3zXP7Q7D5b_ZIDEz_SZIA/exec";
+
+  let guarantorsData = [];
+
+  function getTodayLocalIso() {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    return new Date(now - offset).toISOString().split('T')[0];
+  }
+
+  function resetCustomerForm() {
+    document.getElementById('customerForm').reset();
+    document.getElementById('joinDate').value = getTodayLocalIso();
+    document.getElementById('guarantorPhone').value = "";
+    document.getElementById('status').innerText = "";
+  }
+
+  document.getElementById('joinDate').value = getTodayLocalIso();
+
+  function populateGuarantorDropdown(guarantors) {
+    guarantorsData = guarantors || [];
+    const gSelect = document.getElementById('guarantorSelect');
+    const currentSelectedName = gSelect.value !== "" && guarantorsData[gSelect.value]
+      ? guarantorsData[gSelect.value].name
+      : "";
+
+    gSelect.innerHTML = '<option value="">-- Select Name --</option>';
+
+    guarantorsData.forEach((g, index) => {
+      const opt = document.createElement('option');
+      opt.value = index;
+      opt.textContent = g.nickName ? `${g.name} (${g.nickName})` : g.name;
+      if (g.name === currentSelectedName) {
+        opt.selected = true;
+      }
+      gSelect.appendChild(opt);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // 1. Load cached guarantors immediately (0ms)
+    const cachedGuarantors = localStorage.getItem('nce_cached_guarantors');
+    if (cachedGuarantors) {
+      try {
+        populateGuarantorDropdown(JSON.parse(cachedGuarantors));
+      } catch (e) {
+        console.warn("Cache parse error", e);
+      }
+    }
+
+    // 2. Refresh lists in background
+    fetch(SCRIPT_URL)
+      .then(res => res.json())
+      .then(response => {
+        if (response.guarantors) {
+          localStorage.setItem('nce_cached_guarantors', JSON.stringify(response.guarantors));
+          populateGuarantorDropdown(response.guarantors);
+        }
+        if (response.customers) {
+          localStorage.setItem('nle_cached_customers', JSON.stringify(response.customers));
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load guarantors", err);
+        if (!cachedGuarantors) {
+          document.getElementById('guarantorSelect').innerHTML = '<option value="">-- Failed to load --</option>';
+        }
+      });
+  });
+
+  document.getElementById('guarantorSelect').addEventListener('change', function() {
+    const idx = this.value;
+    if (idx !== "") {
+      document.getElementById('guarantorPhone').value = guarantorsData[idx].phone;
+    } else {
+      document.getElementById('guarantorPhone').value = "";
+    }
+  });
+
+  document.getElementById('aadhaar').addEventListener('input', function (e) {
+    let val = this.value.replace(/\D/g, '').substring(0, 12);
+    let parts = [];
+    for (let i = 0; i < val.length; i += 4) {
+      parts.push(val.substring(i, i + 4));
+    }
+    this.value = parts.join(' ');
+  });
+
+  document.getElementById('pinCode').addEventListener('input', function (e) {
+    this.value = this.value.replace(/\D/g, '').substring(0, 6);
+  });
+
+  document.getElementById('customerForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const status = document.getElementById('status');
+    status.innerText = "";
+
+    const phoneVal = document.getElementById('phoneNum').value.trim();
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(phoneVal)) {
+      status.className = "error";
+      status.innerText = "Please enter a valid 10-digit Indian phone number.";
+      return;
+    }
+
+    const aadhaarVal = document.getElementById('aadhaar').value.replace(/\s/g, '');
+    if (aadhaarVal.length !== 12 || isNaN(aadhaarVal)) {
+      status.className = "error";
+      status.innerText = "Aadhaar number must be exactly 12 digits.";
+      return;
+    }
+
+    const pinVal = document.getElementById('pinCode').value.trim();
+    if (!/^\d{6}$/.test(pinVal)) {
+      status.className = "error";
+      status.innerText = "Please enter a valid 6-digit Pin Code.";
+      return;
+    }
+
+    const selectedGIdx = document.getElementById('guarantorSelect').value;
+    const selectedGuarantor = guarantorsData[selectedGIdx];
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Saving...";
+
+    const payload = {
+      type: "customer",
+      joinDate: document.getElementById('joinDate').value,
+      borrowerName: document.getElementById('borrowerName').value.trim(),
+      phoneNum: phoneVal,
+      waNumber: document.getElementById('waNumber').value.trim(),
+      aadhaar: document.getElementById('aadhaar').value,
+      nickName: document.getElementById('nickName').value.trim(),
+      guarantorName: selectedGuarantor.name,
+      careOf: document.getElementById('careOf').value.trim(),
+      houseName: document.getElementById('houseName').value.trim(),
+      streetName: document.getElementById('streetName').value.trim(),
+      postOffice: document.getElementById('postOffice').value.trim(),
+      pinCode: pinVal
+    };
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      status.className = "success";
+      status.innerText = "Customer successfully registered!";
+      // Clear caches so new customer/guarantor shows up immediately in NLE & NCE
+      localStorage.removeItem('nle_cached_customers');
+      localStorage.removeItem('nce_cached_guarantors');
+      document.getElementById('customerForm').reset();
+      document.getElementById('joinDate').value = getTodayLocalIso();
+      document.getElementById('guarantorPhone').value = "";
+    })
+    .catch(err => {
+      console.error(err);
+      status.className = "error";
+      status.innerText = "Failed to register customer.";
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Save Customer";
+    });
+  });
+</script>
+
+</body>
+</html>

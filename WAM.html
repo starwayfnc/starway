@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Reminders - Starway</title>
+  <script src="auth.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #15191e;
+      color: #ffffff;
+      margin: 0;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background-color: #1e232a;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      width: 100%;
+      max-width: 520px;
+      border: 1px solid #2b323b;
+      box-sizing: border-box;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 10px;
+    }
+
+    .home-btn {
+      padding: 12px 18px;
+      background-color: #2d3343;
+      color: #94a3b8;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .home-btn:hover {
+      background-color: #374151;
+      color: #f8fafc;
+    }
+
+    .home-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .refresh-btn {
+      padding: 12px 14px;
+      background-color: #15191e;
+      color: #00bcd4;
+      border: 1px solid #2b323b;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+      background-color: #242b33;
+      border-color: #00bcd4;
+      color: #38bdf8;
+    }
+
+    h2 {
+      margin: 0 0 14px 0;
+      color: #00bcd4;
+      text-align: center;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+    }
+
+    /* Filter Chips */
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      background-color: #15191e;
+      color: #94a3b8;
+      border: 1px solid #2b323b;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip:hover {
+      border-color: #00bcd4;
+      color: #38bdf8;
+    }
+
+    .chip.active {
+      background-color: #00bcd4;
+      color: #0f172a;
+      border-color: #00bcd4;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #2b323b;
+      background-color: #15191e;
+      color: #ffffff;
+      border-radius: 10px;
+      box-sizing: border-box;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .search-input:focus {
+      border-color: #00bcd4;
+      outline: none;
+    }
+
+    /* Legend Strip */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    /* Loan Rows: Option B layout on Starway Menu Palette (#15191e / #1e232a / #2b323b) */
+    .wa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .wa-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 13px;
+      border-radius: 12px;
+      background-color: #15191e;
+      border: 1px solid #2b323b;
+    }
+
+    /* 1. Due Today: Deep Cyan-Slate fill + Starway Cyan border */
+    .wa-row.TODAY {
+      background-color: #102a33;
+      border: 1.5px solid #00bcd4;
+      color: #cffafe;
+    }
+    .wa-row.TODAY .row-sub { color: #a5f3fc; }
+
+    /* 2. Due Tomorrow: Warm Dark Amber fill + Yellow border */
+    .wa-row.TOMORROW {
+      background-color: #524014;
+      border: 1.5px solid #eab308;
+      color: #fef9c3;
+    }
+    .wa-row.TOMORROW .row-sub { color: #fef08a; }
+
+    /* 3. Overdue: Deep Crimson-Slate fill + Coral-Red border & bright coral text */
+    .wa-row.OVERDUE {
+      background-color: #231317;
+      border: 1.5px solid #f43f5e;
+      color: #fb7185;
+    }
+    .wa-row.OVERDUE .row-sub { color: #fda4af; }
+
+    .row-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .row-title {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      line-height: 1.35;
+    }
+
+    .loan-tag {
+      font-family: monospace;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+    }
+    .pill-TODAY { background: #00bcd4; color: #0f172a; }
+    .pill-TOMORROW { background: #eab308; color: #18181b; }
+    .pill-OVERDUE { background: #f43f5e; color: #ffffff; }
+
+    .row-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .preview-btn {
+      background: #15191e;
+      color: inherit;
+      border: 1px solid #2b323b;
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .send-wa-btn {
+      background-color: #25D366;
+      color: #091e12;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .send-wa-btn.blank-chat {
+      background-color: #1e232a;
+      color: #25D366;
+      border: 1px solid #2b323b;
+    }
+
+    .send-wa-btn.blank-chat:hover {
+      border-color: #25D366;
+    }
+
+    .send-wa-btn.sent {
+      background-color: #152b1f;
+      color: #86efac;
+      border: 1px solid #22c55e;
+    }
+
+    .send-wa-btn.disabled {
+      background-color: #2b323b;
+      color: #64748b;
+      border: none;
+      pointer-events: none;
+    }
+
+    /* Message Preview Box (expandable per row) */
+    .msg-preview-drawer {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: rgba(15, 20, 25, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #f1f5f9;
+      white-space: pre-line;
+    }
+    .msg-preview-drawer.open {
+      display: block;
+    }
+
+    /* Expandable Card 2: Other Active Loans (Not Due Yet) */
+    .collapsible-card {
+      padding: 16px 20px;
+    }
+
+    .collapse-header {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .collapse-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #00bcd4;
+    }
+
+    .count-badge {
+      background-color: #15191e;
+      color: #94a3b8;
+      border: 1px solid #2b323b;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .chevron {
+      font-size: 13px;
+      color: #00bcd4;
+    }
+
+    .collapsible-body {
+      display: none;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #2b323b;
+    }
+
+    .collapsible-body.open {
+      display: block;
+    }
+
+    .state-msg {
+      text-align: center;
+      padding: 22px 10px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- CARD 1: ACTIONABLE REMINDERS (DUE TODAY -> DUE TOMORROW -> OVERDUE) -->
+<div class="card">
+  <div class="top-bar">
+    <button type="button" class="home-btn" onclick="window.location.href='index.html'">&#127968; Home Dashboard</button>
+    <button type="button" class="refresh-btn" onclick="fetchWaList(true)">&#8635; Refresh</button>
+  </div>
+
+  <h2>WhatsApp Reminders</h2>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#00bcd4;"></i> Due Today</span>
+    <span><i class="dot" style="background:#eab308;"></i> Due Tomorrow</span>
+    <span><i class="dot" style="background:#f43f5e;"></i> Overdue</span>
+  </div>
+
+  <div class="filter-row">
+    <button type="button" class="chip active" data-cat="ALL" onclick="setCategory('ALL', this)">All (<span id="cnt-ALL">0</span>)</button>
+    <button type="button" class="chip" data-cat="TODAY" onclick="setCategory('TODAY', this)">Due Today (<span id="cnt-TODAY">0</span>)</button>
+    <button type="button" class="chip" data-cat="TOMORROW" onclick="setCategory('TOMORROW', this)">Tomorrow (<span id="cnt-TOMORROW">0</span>)</button>
+    <button type="button" class="chip" data-cat="OVERDUE" onclick="setCategory('OVERDUE', this)">Overdue (<span id="cnt-OVERDUE">0</span>)</button>
+  </div>
+
+  <input type="text" id="searchBox" class="search-input" placeholder="Search Loan ID, Customer Name, or Nickname..." oninput="renderLists()">
+
+  <div id="dueList" class="wa-list">
+    <div class="state-msg">Loading reminders from WA Msg...</div>
+  </div>
+</div>
+
+<!-- CARD 2: OTHER ACTIVE LOANS (NOT DUE YET - COLLAPSED BY DEFAULT) -->
+<div class="card collapsible-card">
+  <button type="button" class="collapse-header" onclick="toggleOtherCard()">
+    <span class="collapse-title-wrap">
+      <span>Other Active Loans (Not Due Yet)</span>
+      <span class="count-badge" id="cnt-ACTIVE">0</span>
+    </span>
+    <span class="chevron" id="otherChevron">&#9660;</span>
+  </button>
+
+  <div id="otherBody" class="collapsible-body">
+    <div id="otherList" class="wa-list">
+      <div class="state-msg">No other active loans.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOXSqV7odExw90aOMLG2dVq-t6P6JAl6BBDzTlF2Ybxdokr3zXP7Q7D5b_ZIDEz_SZIA/exec";
+
+  let allItems = [];
+  let activeCategory = "ALL";
+  let isOtherExpanded = false;
+  const sentTodayKey = "wam_sent_" + new Date().toISOString().split("T")[0];
+  const sentSet = new Set(JSON.parse(localStorage.getItem(sentTodayKey) || "[]"));
+
+  const PRIORITY_ORDER = {
+    TODAY: 1,
+    TOMORROW: 2,
+    OVERDUE: 3
+  };
+
+  function setCategory(cat, btn) {
+    activeCategory = cat;
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+    btn.classList.add("active");
+    renderLists();
+  }
+
+  function toggleOtherCard(forceState) {
+    isOtherExpanded = typeof forceState === "boolean" ? forceState : !isOtherExpanded;
+    const body = document.getElementById("otherBody");
+    const chevron = document.getElementById("otherChevron");
+    body.classList.toggle("open", isOtherExpanded);
+    chevron.innerHTML = isOtherExpanded ? "&#9650;" : "&#9660;";
+  }
+
+  function markSent(loanId, linkEl, labelAfter) {
+    sentSet.add(loanId);
+    localStorage.setItem(sentTodayKey, JSON.stringify([...sentSet]));
+    linkEl.classList.add("sent");
+    linkEl.textContent = labelAfter || "Sent ✓";
+  }
+
+  function togglePreview(loanId) {
+    const el = document.getElementById("prev-" + loanId);
+    if (el) el.classList.toggle("open");
+  }
+
+  // Builds WhatsApp URL; if message is empty/null, opens chat with blank body
+  function buildWaUrl(mobile, message) {
+    const digits = String(mobile || "").replace(/\D/g, "");
+    if (!digits) return "#";
+    const phone = digits.length === 10 ? "91" + digits : digits;
+    if (!message) {
+      return `https://wa.me/${phone}`;
+    }
+    return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  }
+
+  function updateCounts() {
+    const dueItems = allItems.filter(i => i.category === "TODAY" || i.category === "TOMORROW" || i.category === "OVERDUE");
+    const counts = {
+      ALL: dueItems.length,
+      TODAY: 0,
+      TOMORROW: 0,
+      OVERDUE: 0,
+      ACTIVE: 0
+    };
+
+    allItems.forEach(item => {
+      if (counts[item.category] !== undefined) counts[item.category]++;
+    });
+
+    Object.keys(counts).forEach(k => {
+      const el = document.getElementById("cnt-" + k);
+      if (el) el.textContent = counts[k];
+    });
+  }
+
+  function renderLists() {
+    const query = document.getElementById("searchBox").value.toLowerCase().trim();
+    const dueContainer = document.getElementById("dueList");
+    const otherContainer = document.getElementById("otherList");
+
+    // 1. Card 1: Actionable Reminders sorted Due Today -> Due Tomorrow -> Overdue
+    const dueFiltered = allItems
+      .filter(item => item.category === "TODAY" || item.category === "TOMORROW" || item.category === "OVERDUE")
+      .filter(item => {
+        if (activeCategory !== "ALL" && item.category !== activeCategory) return false;
+        if (query) {
+          const hay = `${item.loanId} ${item.name} ${item.sendLabel}`.toLowerCase();
+          if (!hay.includes(query)) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const pDiff = (PRIORITY_ORDER[a.category] || 99) - (PRIORITY_ORDER[b.category] || 99);
+        if (pDiff !== 0) return pDiff;
+        return (a.loanId || "").localeCompare(b.loanId || "");
+      });
+
+    if (!dueFiltered.length) {
+      dueContainer.innerHTML = '<div class="state-msg">No due or overdue reminders found.</div>';
+    } else {
+      dueContainer.innerHTML = dueFiltered.map(item => {
+        const displayName = item.sendLabel.replace(/^Send to\s+/i, "");
+        const isSent = sentSet.has(item.loanId);
+        const hasPhone = Boolean(item.mobile);
+        const waUrl = buildWaUrl(item.mobile, item.message);
+
+        let badgeHtml = "";
+        if (item.category === "TODAY") {
+          badgeHtml = '<span class="status-pill pill-TODAY">Due Today</span>';
+        } else if (item.category === "TOMORROW") {
+          badgeHtml = '<span class="status-pill pill-TOMORROW">Tomorrow</span>';
+        } else if (item.category === "OVERDUE") {
+          const dLabel = item.daysOverdue === 1 ? "1 Day Overdue" : `${item.daysOverdue} Days Overdue`;
+          badgeHtml = `<span class="status-pill pill-OVERDUE">${dLabel}</span>`;
+        }
+
+        return `
+          <div class="wa-row ${item.category}">
+            <div class="row-main">
+              <div class="row-title">
+                <span class="loan-tag">${item.loanId}</span>
+                <span>${displayName}</span>
+                ${badgeHtml}
+              </div>
+              <div class="row-sub">
+                ₹${item.displayAmt} (${item.partStr}) • Next: ${item.nextDate}
+              </div>
+              <div id="prev-${item.loanId}" class="msg-preview-drawer">${item.message}</div>
+            </div>
+            <div class="row-actions">
+              <button type="button" class="preview-btn" onclick="togglePreview('${item.loanId}')" title="Preview Message">&#128065;</button>
+              <a class="send-wa-btn ${!hasPhone ? 'disabled' : ''} ${isSent ? 'sent' : ''}"
+                 href="${waUrl}" target="_blank" rel="noopener"
+                 onclick="markSent('${item.loanId}', this, 'Sent ✓')">
+                ${isSent ? 'Sent ✓' : 'Send'}
+              </a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 2. Card 2: Other Active Loans (Not Due Yet) -> Blank WhatsApp body
+    const otherFiltered = allItems
+      .filter(item => item.category === "ACTIVE")
+      .filter(item => {
+        if (!query) return true;
+        const hay = `${item.loanId} ${item.name} ${item.sendLabel}`.toLowerCase();
+        return hay.includes(query);
+      });
+
+    if (query && otherFiltered.length > 0 && !isOtherExpanded) {
+      toggleOtherCard(true);
+    }
+
+    if (!otherFiltered.length) {
+      otherContainer.innerHTML = '<div class="state-msg">No matching upcoming loans.</div>';
+    } else {
+      otherContainer.innerHTML = otherFiltered.map(item => {
+        const displayName = item.sendLabel.replace(/^Send to\s+/i, "");
+        const hasPhone = Boolean(item.mobile);
+        const blankWaUrl = buildWaUrl(item.mobile, "");
+
+        return `
+          <div class="wa-row">
+            <div class="row-main">
+              <div class="row-title">
+                <span class="loan-tag">${item.loanId}</span>
+                <span>${displayName}</span>
+              </div>
+              <div class="row-sub">
+                ₹${item.displayAmt} (${item.partStr}) • Next: ${item.nextDate}
+              </div>
+            </div>
+            <div class="row-actions">
+              <a class="send-wa-btn blank-chat ${!hasPhone ? 'disabled' : ''}"
+                 href="${blankWaUrl}" target="_blank" rel="noopener">
+                Chat
+              </a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  function fetchWaList(forceRefresh) {
+    const dueContainer = document.getElementById("dueList");
+    if (forceRefresh) {
+      dueContainer.innerHTML = '<div class="state-msg">Refreshing WA Msg data...</div>';
+    }
+
+    fetch(`${SCRIPT_URL}?action=wamsg`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.ok) {
+          dueContainer.innerHTML = `<div class="state-msg" style="color:#fb7185;">${data.error || "Failed to load WA Msg"}</div>`;
+          return;
+        }
+        allItems = data.items || [];
+        localStorage.setItem("wam_cached_items", JSON.stringify(allItems));
+        updateCounts();
+        renderLists();
+      })
+      .catch(err => {
+        console.error(err);
+        if (!allItems.length) {
+          dueContainer.innerHTML = '<div class="state-msg" style="color:#fb7185;">Connection error. Please try again.</div>';
+        }
+      });
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const cached = localStorage.getItem("wam_cached_items");
+    if (cached) {
+      try {
+        allItems = JSON.parse(cached);
+        updateCounts();
+        renderLists();
+      } catch (e) {}
+    }
+    fetchWaList(false);
+  });
+</script>
+
+</body>
+</html>

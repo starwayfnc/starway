@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Collection Entry</title>
+  <script src="auth.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1b1e;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px 14px;
+      box-sizing: border-box;
+      color: #e2e8f0;
+    }
+    .home-btn-container {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .home-btn {
+      padding: 12px 18px;
+      background-color: #2d3343;
+      color: #94a3b8;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .home-btn:hover {
+      background-color: #374151;
+      color: #f8fafc;
+    }
+    .home-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+    .card {
+      background: #25262b;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 450px;
+      border: 1px solid #2c2e33;
+      box-sizing: border-box;
+    }
+    h2 {
+      margin-top: 0;
+      color: #38bdf8;
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .info-box {
+      background-color: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 15px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #3f3f46;
+      background-color: #18181b;
+      color: #f8fafc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    select:focus, input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+      outline: none;
+    }
+    input[readonly] {
+      background-color: #27272a;
+      color: #a1a1aa;
+      cursor: pointer;
+    }
+    .input-with-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .action-sub-btn {
+      padding: 0 12px;
+      background-color: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .action-sub-btn:hover {
+      background-color: #334155;
+    }
+    .quick-amounts {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .quick-btn {
+      flex: 1;
+      padding: 8px 0;
+      background-color: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .quick-btn:hover {
+      background-color: #334155;
+    }
+    .date-container {
+      position: relative;
+      width: 100%;
+    }
+    #hiddenDateInput {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button[type="submit"] {
+      flex: 2;
+      padding: 12px;
+      background-color: #38bdf8;
+      color: #0f172a;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button[type="submit"]:hover {
+      background-color: #7dd3fc;
+    }
+    button[type="submit"]:disabled {
+      background-color: #3f3f46;
+      color: #71717a;
+      cursor: not-allowed;
+    }
+    .clear-form-btn {
+      flex: 1;
+      padding: 12px;
+      background-color: #1e293b;
+      color: #f87171;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .clear-form-btn:hover {
+      background-color: #334155;
+    }
+    #status {
+      margin-top: 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+
+    /* Instant WhatsApp Receipt Card */
+    .wa-receipt-card {
+      display: none;
+      margin-top: 16px;
+      background: #132a1c;
+      border: 1px solid #25D366;
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .wa-receipt-card.visible {
+      display: block;
+    }
+    .wa-receipt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .wa-receipt-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4ade80;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .wa-closed-badge {
+      background: #facc15;
+      color: #18181b;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .wa-receipt-preview {
+      background: #0f1f15;
+      border: 1px solid #1f472e;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 13px;
+      color: #e2e8f0;
+      white-space: pre-line;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .wa-send-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      background-color: #25D366;
+      color: #091e12;
+      font-weight: 800;
+      font-size: 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-sizing: border-box;
+      transition: background 0.2s;
+    }
+    .wa-send-btn:hover {
+      background-color: #4ade80;
+    }
+    .wa-send-btn.sent {
+      background-color: #1e3a29;
+      color: #86efac;
+      border: 1px solid #22c55e;
+    }
+    .wa-send-btn.disabled {
+      background-color: #3f3f46;
+      color: #a1a1aa;
+      pointer-events: none;
+    }
+
+    /* Today's Receipts History */
+    .today-receipts {
+      margin-top: 16px;
+      border-top: 1px solid #334155;
+      padding-top: 12px;
+    }
+    .today-receipts-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .mini-receipt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .mini-receipt-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #18181b;
+      border: 1px solid #2e323b;
+      border-radius: 8px;
+      padding: 8px 10px;
+      gap: 8px;
+    }
+    .mini-receipt-info {
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .mini-receipt-name {
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .mini-receipt-meta {
+      color: #94a3b8;
+    }
+    .mini-wa-btn {
+      background: #25D366;
+      color: #091e12;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .mini-wa-btn.sent {
+      background: #1e3a29;
+      color: #86efac;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="home-btn-container">
+    <button type="button" class="home-btn" onclick="window.location.href='index.html'">&#127968; Home Dashboard</button>
+  </div>
+  <h2>&#128179; Payment Collection</h2>
+
+  <form id="collectionForm">
+    <div class="form-group">
+      <label for="loanSelect">Select Loan (Sorted Alphabetically)</label>
+      <select id="loanSelect" required>
+        <option value="">-- Loading Active Loans... --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="customerName">Customer Name</label>
+      <input type="text" id="customerName" readonly placeholder="Auto-filled">
+    </div>
+
+    <div class="form-group">
+      <label for="loanAmount">Total Loan Amount</label>
+      <input type="text" id="loanAmount" readonly placeholder="Auto-filled">
+    </div>
+
+    <div class="form-group">
+      <label for="instalmentAmount">Instalment Amount</label>
+      <div class="input-with-actions">
+        <input type="number" step="100" id="instalmentAmount" required placeholder="Auto-filled weekly instalment">
+        <button type="button" class="action-sub-btn" onclick="resetInstalment()" title="Reset to initial instalment">Reset</button>
+        <button type="button" class="action-sub-btn" onclick="clearInstalment()" title="Clear instalment amount">Clear</button>
+      </div>
+      <div class="quick-amounts">
+        <button type="button" class="quick-btn" onclick="addAmount(500)">+500</button>
+        <button type="button" class="quick-btn" onclick="addAmount(1000)">+1000</button>
+        <button type="button" class="quick-btn" onclick="addAmount(1500)">+1500</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="displayDate">Date Received</label>
+      <div class="date-container" onclick="document.getElementById('hiddenDateInput').showPicker ? document.getElementById('hiddenDateInput').showPicker() : document.getElementById('hiddenDateInput').click();">
+        <input type="text" id="displayDate" readonly placeholder="Select Date">
+        <input type="date" id="hiddenDateInput">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="paymentMode">Payment Mode (Remarks)</label>
+      <select id="paymentMode" required>
+        <option value="UPI">UPI</option>
+        <option value="Cash">Cash</option>
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button type="button" class="clear-form-btn" onclick="clearForm()">Clear All</button>
+      <button type="submit" id="submitBtn">Submit Collection</button>
+    </div>
+  </form>
+
+  <div id="status"></div>
+
+  <!-- Instant WhatsApp Receipt Card -->
+  <div id="waReceiptCard" class="wa-receipt-card">
+    <div class="wa-receipt-header">
+      <span class="wa-receipt-title">&#128172; WhatsApp Receipt Ready</span>
+      <span id="waClosedBadge" class="wa-closed-badge" style="display:none;">LOAN CLOSED</span>
+    </div>
+    <div id="waReceiptPreview" class="wa-receipt-preview"></div>
+    <a id="waSendBtn" class="wa-send-btn" href="#" target="_blank" rel="noopener">Send WA Receipt</a>
+  </div>
+
+  <div class="info-box" id="rowIndicator">
+    Checking next available row...
+  </div>
+
+  <!-- Today's Saved Receipts History -->
+  <div id="todayReceiptsSection" class="today-receipts" style="display:none;">
+    <div class="today-receipts-title">Today's Receipts (Tap to Send)</div>
+    <div id="miniReceiptList" class="mini-receipt-list"></div>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOXSqV7odExw90aOMLG2dVq-t6P6JAl6BBDzTlF2Ybxdokr3zXP7Q7D5b_ZIDEz_SZIA/exec";
+
+  let loansData = [];
+  let targetRow = null;
+  let rawDateValue = "";
+  let baseInstalment = 0;
+
+  function formatCurrency(num) {
+    if (num === "" || num === null || isNaN(num)) return "";
+    return Number(num).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function formatCleanNumber(num) {
+    const val = Number(num) || 0;
+    return val % 1 === 0
+      ? val.toLocaleString('en-IN')
+      : val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function formatDateDisplay(dateString) {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    return `${day} ${month} ${year} (${dayOfWeek})`;
+  }
+
+  function getTodayLocalIso() {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    return new Date(now - offset).toISOString().split('T')[0];
+  }
+
+  const todayIso = getTodayLocalIso();
+  rawDateValue = todayIso;
+  document.getElementById('hiddenDateInput').value = todayIso;
+  document.getElementById('displayDate').value = formatDateDisplay(todayIso);
+
+  document.getElementById('hiddenDateInput').addEventListener('change', function() {
+    rawDateValue = this.value;
+    document.getElementById('displayDate').value = formatDateDisplay(rawDateValue);
+  });
+
+  function addAmount(val) {
+    const input = document.getElementById('instalmentAmount');
+    let cleanVal = parseFloat(input.value) || 0;
+    input.value = cleanVal + val;
+  }
+
+  function resetInstalment() {
+    document.getElementById('instalmentAmount').value = baseInstalment;
+  }
+
+  function clearInstalment() {
+    document.getElementById('instalmentAmount').value = "";
+  }
+
+  function clearForm() {
+    document.getElementById('collectionForm').reset();
+    baseInstalment = 0;
+    const resetIso = getTodayLocalIso();
+    rawDateValue = resetIso;
+    document.getElementById('hiddenDateInput').value = resetIso;
+    document.getElementById('displayDate').value = formatDateDisplay(resetIso);
+    document.getElementById('status').innerText = "";
+  }
+
+  function buildWaUrl(mobile, message) {
+    const digits = String(mobile || "").replace(/\D/g, "");
+    if (!digits) return "#";
+    const phone = digits.length === 10 ? "91" + digits : digits;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  }
+
+  // Matches Collection Sheet Columns L & M exact receipt format
+  function buildCollectionReceiptMessage(loan, paidNow, mode) {
+    const name = loan.borrowerName || "";
+    const loanAmt = parseFloat(loan.loanAmt) || 0;
+    const prevCollected = parseFloat(loan.totalCollected) || 0;
+    const instAmt = parseFloat(loan.instalmentAmt || loan.pendingAmt) || 0;
+
+    const newCollected = prevCollected + paidNow;
+    const newRemaining = Math.max(0, loanAmt - newCollected);
+    const calcInstNum = instAmt > 0 ? Math.round((newCollected / instAmt) * 100) / 100 : 1;
+    const instDisplay = calcInstNum % 1 === 0 ? String(calcInstNum) : calcInstNum.toFixed(2);
+    const isClosed = newRemaining <= 0 || calcInstNum >= 10;
+
+    const paidStr = formatCleanNumber(paidNow);
+    const remStr = formatCleanNumber(newRemaining);
+
+    let message = "";
+    if (isClosed) {
+      message =
+        `Dear ${name},\n` +
+        `Payment received: ₹${paidStr} via ${mode}.\n` +
+        `*Loan Closed*\n` +
+        `Thank you.`;
+    } else {
+      message =
+        `Dear ${name},\n` +
+        `Payment received: ₹${paidStr} via ${mode}.\n` +
+        `Payment ${instDisplay} of 10 completed.\n` +
+        `Remaining: ₹${remStr}.`;
+    }
+
+    return {
+      message,
+      isClosed,
+      paidStr,
+      instDisplay
+    };
+  }
+
+  function getTodaySavedReceipts() {
+    const key = "npe_receipts_" + getTodayLocalIso();
+    try {
+      return JSON.parse(localStorage.getItem(key) || "[]");
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveTodayReceipt(entry) {
+    const key = "npe_receipts_" + getTodayLocalIso();
+    const list = getTodaySavedReceipts();
+    list.unshift(entry);
+    localStorage.setItem(key, JSON.stringify(list));
+    renderTodayReceipts();
+  }
+
+  function markReceiptSent(receiptId) {
+    const key = "npe_receipts_" + getTodayLocalIso();
+    const list = getTodaySavedReceipts();
+    list.forEach(item => {
+      if (item.id === receiptId) item.sent = true;
+    });
+    localStorage.setItem(key, JSON.stringify(list));
+    renderTodayReceipts();
+  }
+
+  function renderTodayReceipts() {
+    const list = getTodaySavedReceipts();
+    const section = document.getElementById('todayReceiptsSection');
+    const container = document.getElementById('miniReceiptList');
+
+    if (!list.length) {
+      section.style.display = "none";
+      return;
+    }
+
+    section.style.display = "block";
+    container.innerHTML = list.map(item => {
+      const waUrl = buildWaUrl(item.mobile, item.message);
+      const hasPhone = Boolean(String(item.mobile || "").replace(/\D/g, ""));
+      return `
+        <div class="mini-receipt-item">
+          <div class="mini-receipt-info">
+            <div class="mini-receipt-name">${item.name} (${item.loanId})</div>
+            <div class="mini-receipt-meta">₹${item.paidStr} • ${item.mode} • ${item.isClosed ? 'Closed' : item.instDisplay + '/10'}</div>
+          </div>
+          ${hasPhone
+            ? `<a class="mini-wa-btn ${item.sent ? 'sent' : ''}" href="${waUrl}" target="_blank" rel="noopener" onclick="markReceiptSent('${item.id}')">${item.sent ? 'Sent ✓' : 'Send WA'}</a>`
+            : `<span class="mini-receipt-meta">No Phone</span>`
+          }
+        </div>
+      `;
+    }).join('');
+  }
+
+  function showInstantReceiptCard(receiptObj) {
+    const card = document.getElementById('waReceiptCard');
+    const preview = document.getElementById('waReceiptPreview');
+    const btn = document.getElementById('waSendBtn');
+    const closedBadge = document.getElementById('waClosedBadge');
+
+    preview.textContent = receiptObj.message;
+    closedBadge.style.display = receiptObj.isClosed ? 'inline-block' : 'none';
+
+    const hasPhone = Boolean(String(receiptObj.mobile || "").replace(/\D/g, ""));
+    if (hasPhone) {
+      btn.href = buildWaUrl(receiptObj.mobile, receiptObj.message);
+      btn.className = "wa-send-btn";
+      btn.textContent = `Send WA Receipt to ${receiptObj.name}`;
+      btn.onclick = function() {
+        btn.classList.add('sent');
+        btn.textContent = `Sent to ${receiptObj.name} ✓`;
+        markReceiptSent(receiptObj.id);
+      };
+    } else {
+      btn.href = "#";
+      btn.className = "wa-send-btn disabled";
+      btn.textContent = "No Mobile Number Found";
+      btn.onclick = null;
+    }
+
+    card.classList.add('visible');
+  }
+
+  function populateLoanDropdown(loans) {
+    loansData = loans || [];
+    loansData.sort((a, b) => (a.borrowerName || "").localeCompare(b.borrowerName || ""));
+
+    const loanSelect = document.getElementById('loanSelect');
+    const currentSelectedLoanId = loanSelect.value !== "" && loansData[loanSelect.value]
+      ? loansData[loanSelect.value].loanId
+      : "";
+
+    loanSelect.innerHTML = '<option value="">-- Select Active Loan --</option>';
+
+    loansData.forEach((loan, index) => {
+      const opt = document.createElement('option');
+      opt.value = index;
+      opt.textContent = `${loan.borrowerName} (${loan.loanId})`;
+      if (loan.loanId === currentSelectedLoanId) {
+        opt.selected = true;
+      }
+      loanSelect.appendChild(opt);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    renderTodayReceipts();
+
+    const cachedLoans = localStorage.getItem('npe_cached_loans');
+    if (cachedLoans) {
+      try {
+        populateLoanDropdown(JSON.parse(cachedLoans));
+      } catch (e) {
+        console.warn("Cache parse error", e);
+      }
+    }
+
+    fetch(`${SCRIPT_URL}?mode=npe`)
+      .then(res => res.json())
+      .then(response => {
+        targetRow = response.nextRow;
+        document.getElementById('rowIndicator').innerHTML = `&#128190; Data will be saved to Row: ${targetRow}`;
+
+        if (response.loans) {
+          localStorage.setItem('npe_cached_loans', JSON.stringify(response.loans));
+          populateLoanDropdown(response.loans);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('rowIndicator').innerHTML = '&#9888;&#65039; Failed to connect to sheet.';
+        document.getElementById('rowIndicator').style.backgroundColor = '#450a0a';
+        document.getElementById('rowIndicator').style.color = '#fca5a5';
+      });
+  });
+
+  document.getElementById('loanSelect').addEventListener('change', function () {
+    const selectedIndex = this.value;
+    if (selectedIndex !== "") {
+      const selectedLoan = loansData[selectedIndex];
+      document.getElementById('customerName').value = selectedLoan.borrowerName || "";
+
+      const rawLoanAmt = parseFloat(selectedLoan.loanAmt || selectedLoan.loanAmount || 0);
+      document.getElementById('loanAmount').value = formatCurrency(rawLoanAmt);
+
+      baseInstalment = parseFloat(selectedLoan.pendingAmt || 0);
+      document.getElementById('instalmentAmount').value = baseInstalment;
+    } else {
+      document.getElementById('customerName').value = "";
+      document.getElementById('loanAmount').value = "";
+      document.getElementById('instalmentAmount').value = "";
+      baseInstalment = 0;
+    }
+  });
+
+  document.getElementById('collectionForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const selectedIndex = document.getElementById('loanSelect').value;
+    if (selectedIndex === "") return;
+
+    const selectedLoan = { ...loansData[selectedIndex] };
+    const submitBtn = document.getElementById('submitBtn');
+    const status = document.getElementById('status');
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+    status.innerText = "";
+
+    const savedRow = targetRow;
+    const rawInstalmentVal = parseFloat(document.getElementById('instalmentAmount').value) || 0;
+    const chosenMode = document.getElementById('paymentMode').value;
+
+    const payload = {
+      cltnDate: rawDateValue,
+      amtRcvd: rawInstalmentVal,
+      paymentMode: chosenMode,
+      loanId: selectedLoan.loanId
+    };
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      // Build receipt BEFORE clearing the form
+      const receiptData = buildCollectionReceiptMessage(selectedLoan, rawInstalmentVal, chosenMode);
+      const receiptEntry = {
+        id: selectedLoan.loanId + "_" + Date.now(),
+        loanId: selectedLoan.loanId,
+        name: selectedLoan.borrowerName,
+        mobile: selectedLoan.mobileNum || "",
+        paidStr: receiptData.paidStr,
+        mode: chosenMode,
+        instDisplay: receiptData.instDisplay,
+        isClosed: receiptData.isClosed,
+        message: receiptData.message,
+        sent: false
+      };
+
+      // Update local loan balance in memory so back-to-back payments stay accurate
+      loansData[selectedIndex].totalCollected = (parseFloat(loansData[selectedIndex].totalCollected) || 0) + rawInstalmentVal;
+
+      saveTodayReceipt(receiptEntry);
+      showInstantReceiptCard(receiptEntry);
+
+      status.className = "success";
+      status.innerText = "Successfully recorded collection!";
+      clearForm();
+
+      if (targetRow !== null) {
+        targetRow++;
+        document.getElementById('rowIndicator').innerHTML = `&#128190; Successfully saved to Row: ${savedRow} | Next Row: ${targetRow}`;
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      status.className = "error";
+      status.innerText = "Failed to submit entry.";
+      if (targetRow !== null) {
+        document.getElementById('rowIndicator').innerHTML = `&#128190; Data will be saved to Row: ${targetRow}`;
+      }
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit Collection";
+    });
+  });
+</script>
+
+</body>
+</html>
