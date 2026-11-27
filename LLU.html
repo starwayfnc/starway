@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loan &amp; Customer Lookup</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <script src="auth.js"></script>
   <style>
     :root {
@@ -22,7 +22,10 @@
       --page-max-width: 480px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 24px 16px;
@@ -31,22 +34,27 @@
       color: var(--text-main);
       line-height: 1.35;
       font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
+
     .container {
       width: 100%;
       max-width: var(--page-max-width);
-      margin: 0 auto;
     }
 
     /* Search & Header Panel */
-    .main-shell {
+    .panel {
       background-color: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
+
     .top-nav {
       display: flex;
       justify-content: space-between;
@@ -55,6 +63,7 @@
       margin-bottom: 14px;
       flex-wrap: wrap;
     }
+
     .btn-home {
       display: inline-flex;
       align-items: center;
@@ -71,11 +80,17 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .btn-home:hover {
       background-color: var(--bg-elevated);
       color: var(--accent-hover);
       border-color: var(--accent);
     }
+
+    .btn-home:active {
+      transform: translateY(1px);
+    }
+
     .today-badge {
       font-size: 12px;
       font-weight: 600;
@@ -85,17 +100,15 @@
       padding: 6px 10px;
       border-radius: 8px;
     }
+
     .today-badge span {
       color: var(--accent);
       font-weight: 700;
     }
 
-    .page-title-wrap {
-      text-align: center;
-      margin-bottom: 14px;
-    }
     h1 {
-      margin: 0;
+      margin: 0 0 12px 0;
+      text-align: center;
       font-size: 20px;
       font-weight: 700;
       color: var(--accent);
@@ -104,9 +117,9 @@
     .search-row {
       display: grid;
       grid-template-columns: 1fr auto auto;
-      align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
+
     input {
       width: 100%;
       padding: 10px 12px;
@@ -116,7 +129,11 @@
       color: var(--text-main);
       font-size: 14px;
     }
-    input::placeholder { color: #64748b; }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
     input:focus {
       outline: none;
       border-color: var(--accent);
@@ -135,12 +152,17 @@
       white-space: nowrap;
       transition: all 0.2s ease;
     }
-    button:hover { background-color: var(--accent-hover); }
+
+    button:hover {
+      background-color: var(--accent-hover);
+    }
+
     button.btn-secondary {
       background-color: var(--bg-page);
       color: var(--text-muted);
       border: 1px solid var(--border-subtle);
     }
+
     button.btn-secondary:hover {
       background-color: var(--bg-elevated);
       border-color: var(--accent);
@@ -151,7 +173,10 @@
       margin-top: 10px;
       font-size: 13px;
       color: var(--text-muted);
+      text-align: center;
+      font-weight: 600;
     }
+
     .err { color: var(--danger); }
     .ok { color: #4ade80; }
     .info { color: var(--accent); }
@@ -166,250 +191,295 @@
       padding: 16px;
       margin-bottom: 12px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-      text-align: left;
     }
+
     .card.highlight {
-      box-shadow: 0 0 0 1px rgba(0, 188, 212, 0.55), 0 10px 24px rgba(0, 0, 0, 0.4);
+      border-color: var(--accent);
     }
 
     /* Customer Card */
     .customer-card {
-      background: linear-gradient(165deg, #1b242d 0%, var(--bg-card) 60%, var(--bg-page) 100%);
-      border: 1px solid var(--border-subtle);
-      border-top: 4px solid var(--accent);
+      background-color: #192231;
+      border-color: #2e4361;
+      border-top: 3px solid var(--accent);
     }
-    .customer-hero {
+
+    .customer-card.blacklisted {
+      background-color: #26141a;
+      border: 2px solid var(--danger);
+    }
+
+    .blacklist-banner {
+      background-color: #dc2626;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .customer-top-row {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 10px;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid var(--border-subtle);
-      flex-wrap: wrap;
+      margin-bottom: 8px;
     }
-    .customer-hero-main {
-      flex: 1 1 220px;
+
+    .customer-title-block {
+      flex: 1 1 auto;
       min-width: 0;
     }
-    .customer-name-large {
+
+    .customer-name {
       margin: 0;
-      font-size: 19px;
+      font-size: 18.5px;
       font-weight: 800;
       color: var(--text-main);
       line-height: 1.25;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
     }
-    .customer-nickname-inline {
-      font-size: 14px;
+
+    .cust-id-inline {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background-color: var(--bg-page);
+      border: 1px solid #2e4c6d;
+      padding: 2px 7px;
+      border-radius: 999px;
+      letter-spacing: 0.3px;
+    }
+
+    .customer-nick {
+      display: block;
+      font-size: 13px;
       font-weight: 600;
       color: var(--accent);
-      margin-left: 5px;
+      margin-top: 2px;
     }
-    .customer-contact-line {
-      margin-top: 7px;
+
+    .intro-kpi-box {
+      flex: 0 0 auto;
+      background-color: var(--bg-page);
+      border: 1px solid #2e4361;
+      border-radius: 8px;
+      padding: 6px 10px;
+      text-align: left;
+      min-width: 118px;
+      max-width: 155px;
+    }
+
+    .intro-kpi-box .kpi-lbl {
+      color: #7dd3fc;
+    }
+
+    .customer-sub-block {
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #2b3648;
+    }
+
+    .contact-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px 8px;
-      font-size: 13px;
+      gap: 6px;
+      font-size: 12.5px;
       font-weight: 700;
     }
-    .contact-link {
+
+    .contact-link, .contact-static {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       background-color: var(--bg-page);
       border: 1px solid var(--border-subtle);
-      padding: 4px 9px;
+      padding: 4px 8px;
       border-radius: 8px;
       text-decoration: none;
-      color: var(--accent);
+      color: var(--text-main);
+      transition: all 0.15s ease;
     }
+
     .contact-link:hover {
+      background-color: var(--bg-elevated);
       border-color: var(--accent);
       color: var(--accent-hover);
     }
+
     .contact-link.wa-link {
-      border-color: rgba(37, 211, 102, 0.45);
-      color: var(--wa-green-hover);
+      border-color: #1f6e43;
+      color: #86efac;
     }
+
     .contact-link.wa-link:hover {
       border-color: var(--wa-green);
-      background: rgba(37, 211, 102, 0.14);
+      color: var(--wa-green-hover);
     }
+
     .contact-static {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background-color: var(--bg-page);
-      border: 1px solid var(--border-subtle);
-      padding: 4px 9px;
-      border-radius: 8px;
       color: var(--text-muted);
     }
-    .customer-address-large {
-      margin-top: 7px;
-      font-size: 13px;
+
+    .customer-address {
+      margin-top: 8px;
+      font-size: 12.5px;
       color: #cbd5e1;
     }
 
-    /* Introduced By Box */
-    .intro-kpi-box {
-      background-color: var(--bg-page);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 7px 12px;
-      min-width: 135px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .intro-kpi-lbl {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: var(--text-muted);
-      line-height: 1.15;
-      margin-bottom: 3px;
-    }
-    .intro-kpi-val {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-main);
-      line-height: 1.2;
-    }
-
-    /* Single Customer Metadata Line */
-    .customer-meta-strip {
+    .customer-badges-row {
+      margin-top: 8px;
       display: flex;
       flex-wrap: wrap;
+      gap: 5px;
       align-items: center;
-      gap: 4px 8px;
-      font-size: 12.5px;
-      color: var(--text-muted);
-    }
-    .customer-meta-strip strong {
-      color: var(--text-main);
-      font-weight: 700;
-    }
-    .meta-dot {
-      color: #475569;
-      user-select: none;
     }
 
-    /* 8-Box Loan KPI Grid (2 columns optimized for 480px container) */
-    .loan-kpi-grid-8 {
+    /* KPI Grids */
+    .kpi-strip {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 6px;
       margin-bottom: 10px;
     }
+
+    .loan-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
     .kpi-box {
       background-color: var(--bg-page);
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      padding: 7px 8px;
+      padding: 6px 7px;
       min-width: 0;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      text-align: left;
     }
+
+    .kpi-box.featured-date {
+      border-color: #2e4c6d;
+    }
+
     .kpi-lbl {
-      font-size: 10px;
-      font-weight: 600;
+      font-size: 9.5px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.35px;
+      letter-spacing: 0.25px;
       color: var(--text-muted);
-      line-height: 1.15;
-      margin-bottom: 3px;
-      width: 100%;
+      margin-bottom: 2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-align: left;
     }
+
     .kpi-val {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-main);
-      line-height: 1.2;
-      width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-align: left;
     }
 
-    /* Active vs Closed Loan Styling */
+    /* Active vs Closed Loan Cards */
     .card.loan-active {
-      background: linear-gradient(165deg, #162421 0%, var(--bg-card) 100%);
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      border-left: 5px solid #22c55e;
+      background-color: #14201b;
+      border-color: #244736;
+      border-left: 4px solid #22c55e;
     }
+
     .card.loan-closed {
-      background: linear-gradient(165deg, var(--bg-card) 0%, #181c22 100%);
-      border: 1px solid var(--border-subtle);
-      border-left: 5px solid #64748b;
+      background-color: #1b1f26;
+      border-color: var(--border-subtle);
+      border-left: 4px solid #64748b;
     }
 
-    /* Single Summary Line Below KPI Grid */
-    .loan-meta-line {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 4px 8px;
-      font-size: 12.5px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-    .loan-meta-line strong {
-      color: var(--text-main);
-      font-weight: 600;
-    }
-
-    /* Badges & Tags */
     .card-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
       flex-wrap: wrap;
     }
-    .badges { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
-    .card-title { margin: 0; font-size: 16px; font-weight: 700; color: var(--text-main); }
+
+    .card-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .badges {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
     .tag {
       background-color: var(--bg-page);
-      color: #cbd5e1;
-      border: 1px solid var(--border-subtle);
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .tag-active {
-      background: rgba(34, 197, 94, 0.16);
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.45);
-    }
-    .tag-closed {
-      background: rgba(148, 163, 184, 0.14);
-      color: #cbd5e1;
-      border: 1px solid rgba(148, 163, 184, 0.32);
-    }
-    .tag-seq {
-      background: rgba(0, 188, 212, 0.14);
       color: var(--accent);
-      border: 1px solid rgba(0, 188, 212, 0.38);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
-    .tag-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
-    .tag-pink { background: rgba(192, 132, 252, 0.15); color: #e9d5ff; border: 1px solid rgba(192, 132, 252, 0.45); }
-    .tag-red { background: rgba(244, 63, 94, 0.18); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.5); }
+
+    .tag-active { color: #4ade80; border-color: #245c38; }
+    .tag-closed { color: #cbd5e1; border-color: #475569; }
+    .tag-seq { color: #7dd3fc; border-color: #2b4c6b; }
+    .tag-rank-a { color: #4ade80; border-color: #245c38; }
+    .tag-rank-b { color: #7dd3fc; border-color: #2b4c6b; }
+    .tag-rank-c { color: #fbbf24; border-color: #6b4f1d; }
+    .tag-rank-d { color: #fca5a5; border-color: #7f2727; }
+    .tag-amber { color: #fbbf24; border-color: #6b4f1d; }
+    .tag-pink { color: #e9d5ff; border-color: #5b3878; }
+    .tag-red { color: #fca5a5; border-color: #7f2727; }
+    .tag-black { background-color: #dc2626; color: #ffffff; border: none; }
+
+    /* Non-duplicated metadata rows */
+    .meta-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+    }
+
+    .lbl {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      word-break: break-word;
+    }
 
     /* Multi-match list */
-    .match-list { display: flex; flex-direction: column; gap: 8px; }
+    .match-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .match-item {
       display: flex;
       justify-content: space-between;
@@ -423,78 +493,71 @@
       flex-wrap: wrap;
       transition: all 0.15s ease;
     }
+
     .match-item:hover {
       background-color: var(--bg-elevated);
       border-color: var(--accent);
     }
-    .match-item.match-black { border-color: var(--danger); background: #26161a; }
-    .match-main { font-size: 14.5px; font-weight: 700; color: var(--text-main); }
-    .match-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
 
-    /* Blacklist & Tenure Notes */
-    .card.blacklisted {
-      border: 2px solid var(--danger);
-      background: linear-gradient(160deg, #2a161d 0%, #1d1115 100%);
+    .match-item.match-black {
+      border-color: var(--danger);
+      background-color: #26141a;
     }
-    .blacklist-banner {
-      background-color: var(--danger);
-      color: #fff;
+
+    .match-main {
+      font-size: 14px;
       font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      font-size: 12.5px;
+      color: var(--text-main);
     }
-    .tag-black { background-color: var(--danger); color: #fff; border: none; }
 
-    .tenure-note {
-      margin-bottom: 10px;
-      padding: 7px 10px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      font-weight: 600;
-      background-color: var(--bg-page);
-      border: 1px solid var(--border-subtle);
+    .match-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
     }
-    .tenure-note.over { border-color: #f59e0b; color: #fde68a; background: rgba(245, 158, 11, 0.12); }
-    .tenure-note.early-bad { border-color: var(--danger); color: #fecaca; background: rgba(244, 63, 94, 0.14); }
 
-    /* Nested Collections History Bar Inside Loan Card */
-    .collections-bar {
+    /* Collections History */
+    .collections-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      width: 100%;
-      padding: 8px 11px;
-      background-color: var(--bg-page);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      transition: border-color 0.2s ease;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
     }
-    .collections-bar:hover {
-      border-color: var(--accent);
-    }
+
     .collections-title {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
-      letter-spacing: 0.35px;
+      letter-spacing: 0.4px;
       text-transform: uppercase;
-      color: #e2e8f0;
-    }
-    .collections-action {
-      font-size: 12px;
-      font-weight: 600;
       color: var(--accent);
     }
+
+    .toggle-btn {
+      padding: 6px 11px;
+      font-size: 12px;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--bg-elevated);
+      border-color: var(--accent);
+      color: var(--accent-hover);
+    }
+
     .payments-wrap {
       overflow-x: auto;
       margin-top: 8px;
-      -webkit-overflow-scrolling: touch;
     }
-    .payments-wrap.collapsed { display: none; }
+
+    .payments-wrap.collapsed {
+      display: none;
+    }
 
     table {
       width: 100%;
@@ -503,39 +566,92 @@
       background-color: var(--bg-page);
       border-radius: 8px;
       overflow: hidden;
-      min-width: 410px;
+      min-width: 380px;
     }
-    th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border-subtle); }
+
+    th, td {
+      text-align: left;
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
     th {
       color: var(--accent);
-      font-size: 11px;
+      font-size: 10.5px;
       text-transform: uppercase;
       background-color: #192028;
     }
-    tr:last-child td { border-bottom: none; }
-    .sl-col { width: 32px; color: var(--text-muted); font-weight: 700; }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .sl-col {
+      width: 28px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
 
     @media (max-width: 460px) {
-      body { padding: 16px 12px; }
-      .main-shell, .card { padding: 14px; }
-      .search-row { grid-template-columns: 1fr 1fr; }
-      #searchInput { grid-column: 1 / -1; }
-      .search-row button { width: 100%; }
-      .intro-kpi-box { width: 100%; }
+      body {
+        padding: 16px 12px;
+        font-size: 13.5px;
+      }
+
+      .panel, .card {
+        padding: 14px;
+        margin-bottom: 10px;
+      }
+
+      .search-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      #searchInput {
+        grid-column: 1 / -1;
+      }
+
+      .search-row button {
+        width: 100%;
+      }
+
+      .customer-name {
+        font-size: 17px;
+      }
+
+      .intro-kpi-box {
+        min-width: 105px;
+        max-width: 135px;
+        padding: 5px 8px;
+      }
+
+      .loan-kpi-grid {
+        gap: 5px;
+      }
+
+      .kpi-box {
+        padding: 5px 6px;
+      }
+
+      .kpi-lbl {
+        font-size: 9px;
+      }
+
+      .kpi-val {
+        font-size: 12.5px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="main-shell">
+    <div class="panel">
       <div class="top-nav">
         <a class="btn-home" href="index.html">&#127968; Home Dashboard</a>
         <div class="today-badge">Today: <span id="todayDateDisplay">-</span></div>
       </div>
 
-      <div class="page-title-wrap">
-        <h1>&#128269; Loan &amp; Customer Lookup</h1>
-      </div>
+      <h1>&#128269; Loan &amp; Customer Lookup</h1>
 
       <div class="search-row">
         <input id="searchInput" type="text" placeholder="Loan No. (24) or Name (Madhu)" autofocus />
@@ -551,13 +667,14 @@
 
   <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwOXSqV7odExw90aOMLG2dVq-t6P6JAl6BBDzTlF2Ybxdokr3zXP7Q7D5b_ZIDEz_SZIA/exec";
+    const LAST_RESULT_KEY = "starway_llu_last";
 
     const STANDARD_WEEKS = 10;
     const STANDARD_DAYS = STANDARD_WEEKS * 7;
     const BUFFER_DAYS = 5;
     const STANDARD_INSTALLMENTS = 10;
     const QUICK_RENEWAL_MAX_DAYS = 7;
-    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+    const MS_PER_DAY = 86400000;
 
     const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -568,22 +685,19 @@
       if (!cleaned) return null;
 
       if (/^\d+$/.test(cleaned)) {
-        const num = parseInt(cleaned, 10);
-        return { type: "loan", value: "SW_L" + String(num).padStart(4, "0") };
+        return { type: "loan", value: "SW_L" + String(parseInt(cleaned, 10)).padStart(4, "0") };
       }
 
       const swlMatch = cleaned.match(/^sw[_-\s]*l[\s_-]*(\d+)$/i);
       if (swlMatch) {
-        const num = parseInt(swlMatch[1], 10);
-        return { type: "loan", value: "SW_L" + String(num).padStart(4, "0") };
+        return { type: "loan", value: "SW_L" + String(parseInt(swlMatch[1], 10)).padStart(4, "0") };
       }
 
       return { type: "customer", value: cleaned };
     }
 
     function fmtNum(num) {
-      const val = Math.round(Number(num) || 0);
-      return val.toLocaleString("en-IN", { maximumFractionDigits: 0 });
+      return Math.round(Number(num) || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 });
     }
 
     function sanitizeDigits(val) {
@@ -591,48 +705,44 @@
     }
 
     function buildTelHref(rawNum) {
-      const digits = sanitizeDigits(rawNum);
-      if (!digits) return "";
-      if (digits.length === 10) return `tel:+91${digits}`;
-      return `tel:+${digits}`;
+      const d = sanitizeDigits(rawNum);
+      return !d ? "" : (d.length === 10 ? `tel:+91${d}` : `tel:+${d}`);
     }
 
     function buildWaHref(rawNum) {
-      const digits = sanitizeDigits(rawNum);
-      if (!digits) return "";
-      const waDigits = digits.length === 10 ? `91${digits}` : digits;
-      return `https://wa.me/${waDigits}`;
+      const d = sanitizeDigits(rawNum);
+      return !d ? "" : `https://wa.me/${d.length === 10 ? "91" + d : d}`;
     }
 
     function parseValidDate(val) {
       if (!val) return null;
       const d = new Date(val);
-      if (isNaN(d.getTime())) return null;
-      return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      return isNaN(d.getTime()) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
     }
 
     function addDays(dateObj, days) {
-      if (!dateObj) return null;
-      return new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate() + days);
+      return dateObj ? new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate() + days) : null;
     }
 
     function diffInDays(fromDate, toDate) {
-      if (!fromDate || !toDate) return null;
-      return Math.round((toDate.getTime() - fromDate.getTime()) / MS_PER_DAY);
+      return (fromDate && toDate) ? Math.round((toDate.getTime() - fromDate.getTime()) / MS_PER_DAY) : null;
     }
 
     function fmtDate(val) {
       const d = parseValidDate(val);
       if (!d) return val ? String(val) : "-";
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${day} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+      return `${String(d.getDate()).padStart(2, "0")} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
     }
 
     function fmtDateWithDay(val) {
       const d = parseValidDate(val);
       if (!d) return val ? String(val) : "-";
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${day} ${MONTHS[d.getMonth()]} ${d.getFullYear()} (${WEEKDAYS[d.getDay()]})`;
+      return `${fmtDate(d)} (${WEEKDAYS[d.getDay()]})`;
+    }
+
+    function getDayTag(val) {
+      const d = parseValidDate(val);
+      return d ? ` (${WEEKDAYS[d.getDay()].toUpperCase()})` : "";
     }
 
     function esc(str) {
@@ -660,44 +770,50 @@
       inputEl.value = "";
       document.getElementById("output").innerHTML = "";
       document.getElementById("status").innerHTML = "Enter loan no. or customer name.";
+      try { sessionStorage.removeItem(LAST_RESULT_KEY); } catch (e) {}
       inputEl.focus();
     }
 
     function togglePayments(safeLoanId) {
       const wrap = document.getElementById(`payments-wrap-${safeLoanId}`);
-      const arrow = document.getElementById(`toggle-arrow-${safeLoanId}`);
-      const label = document.getElementById(`toggle-label-${safeLoanId}`);
-      if (!wrap || !arrow || !label) return;
-
+      const btn = document.getElementById(`toggle-btn-${safeLoanId}`);
+      if (!wrap || !btn) return;
       const isCollapsed = wrap.classList.toggle("collapsed");
-      arrow.innerHTML = isCollapsed ? "&#9662;" : "&#9652;";
-      label.textContent = isCollapsed ? "[+ Expand]" : "[- Collapse]";
+      btn.innerHTML = isCollapsed ? "&#9656; Expand" : "&#9662; Collapse";
     }
 
     function sortLoansChronologically(loans) {
       return [...loans].sort((a, b) => {
         const da = parseValidDate(a.loanDate);
         const db = parseValidDate(b.loanDate);
+        if (da && db && da.getTime() !== db.getTime()) return da.getTime() - db.getTime();
         const na = parseInt(String(a.loanId || "").replace(/\D+/g, ""), 10) || 0;
         const nb = parseInt(String(b.loanId || "").replace(/\D+/g, ""), 10) || 0;
-
-        if (da && db && da.getTime() !== db.getTime()) {
-          return da.getTime() - db.getTime();
-        }
         return na - nb;
       });
     }
 
     function resolveLoanPendingBalance(loan) {
-      const statusUpper = String(loan.status || "").trim().toUpperCase();
-      if (statusUpper === "CLOSED") return 0;
-
-      const loanAmt = Number(loan.loanAmt) || 0;
-      const totalReceived = Number(loan.totalReceived) || 0;
+      if (String(loan.status || "").trim().toUpperCase() === "CLOSED") return 0;
       const rawPending = Number(loan.pendingAmt);
-
       if (rawPending > 0) return rawPending;
-      return Math.max(0, loanAmt - totalReceived);
+      return Math.max(0, (Number(loan.loanAmt) || 0) - (Number(loan.totalReceived) || 0));
+    }
+
+    function summarizePaymentModes(payments) {
+      let upi = 0, cash = 0, other = 0;
+      (payments || []).forEach(p => {
+        const r = String(p.remarks || "").trim().toUpperCase();
+        if (!r) return;
+        if (r.includes("UPI")) upi += 1;
+        else if (r.includes("CASH")) cash += 1;
+        else other += 1;
+      });
+      const parts = [];
+      if (upi > 0) parts.push(`UPI: ${upi}`);
+      if (cash > 0) parts.push(`Cash: ${cash}`);
+      if (other > 0) parts.push(`Other: ${other}`);
+      return parts.length ? parts.join(" \u2022 ") : "-";
     }
 
     function resolveFirstCollectionDate(loan) {
@@ -706,26 +822,19 @@
         parseValidDate(loan.firstCollectionDate) ||
         parseValidDate(loan.firstDueDate) ||
         parseValidDate(loan.dueDate);
-
       if (explicitFirst) return explicitFirst;
 
       const loanDate = parseValidDate(loan.loanDate);
       if (!loanDate) return null;
 
       let firstDue = addDays(loanDate, 7);
-
       const nextCol = parseValidDate(loan.nextColDate);
       if (nextCol) {
-        const targetDay = nextCol.getDay();
-        const currentDay = firstDue.getDay();
-        if (targetDay !== currentDay) {
-          let shift = targetDay - currentDay;
-          if (shift < -3) shift += 7;
-          if (shift > 3) shift -= 7;
-          firstDue = addDays(firstDue, shift);
-        }
+        let shift = nextCol.getDay() - firstDue.getDay();
+        if (shift < -3) shift += 7;
+        if (shift > 3) shift -= 7;
+        firstDue = addDays(firstDue, shift);
       }
-
       return firstDue;
     }
 
@@ -754,17 +863,21 @@
       let latest = null;
       (payments || []).forEach(p => {
         const pd = parseValidDate(p.cltnDate);
-        if (pd && (!latest || pd.getTime() > latest.getTime())) {
-          latest = pd;
-        }
+        if (pd && (!latest || pd.getTime() > latest.getTime())) latest = pd;
       });
       return latest;
     }
 
     function resolveExpectedCloseDate(loan, firstDueDate) {
       const baseDue = firstDueDate || addDays(parseValidDate(loan.loanDate), 7);
-      if (!baseDue) return null;
-      return addDays(baseDue, (STANDARD_INSTALLMENTS - 1) * 7);
+      return baseDue ? addDays(baseDue, (STANDARD_INSTALLMENTS - 1) * 7) : null;
+    }
+
+    function formatDiffLabel(days) {
+      if (days < 0) {
+        return `${Math.abs(days)}D EARLY`;
+      }
+      return `${days} ${days === 1 ? "DAY" : "DAYS"}`;
     }
 
     function computePaymentRows(loan, firstDueDate) {
@@ -772,9 +885,11 @@
       const instAmt = Number(loan.instalmentAmt) || 0;
       const loanAmt = Number(loan.loanAmt) || 0;
       const anchorFirstDue = firstDueDate || addDays(parseValidDate(loan.loanDate), 7);
+      const isClosedLoan = String(loan.status || "").trim().toUpperCase() === "CLOSED";
 
       let cycleIndex = 0;
       let cycleAccumulated = 0;
+      let cyclePartCount = 0;
       let cycleStarted = false;
       let cumulativePaid = 0;
       let prevPayDate = null;
@@ -796,6 +911,7 @@
         }
 
         const alreadySettledBeforeThis = loanAmt > 0 && cumulativePaid >= loanAmt;
+        const isClosingPayment = isClosedLoan && loanAmt > 0 && cumulativePaid < loanAmt && (cumulativePaid + amt) >= loanAmt;
         const isSameDayAsPrev = prevPayDate && diffInDays(prevPayDate, actual) === 0;
 
         cumulativePaid += amt;
@@ -807,19 +923,49 @@
         let dayDiffNum = null;
 
         if (isPartOfOngoingCycle) {
+          cyclePartCount += 1;
           cycleAccumulated += amt;
           const isCompletedNow = cycleAccumulated >= instAmt;
-          diffText = isCompletedNow ? "Part (Done)" : "Part (Due)";
-          diffCls = isCompletedNow ? "ok" : "warn";
 
-          if (isCompletedNow) {
-            cycleIndex += 1;
-            cycleAccumulated = 0;
-            cycleStarted = false;
+          if (!isCompletedNow) {
+            diffText = `PART (${cyclePartCount})`;
+            diffCls = "warn";
+          } else {
+            const scheduledDue = addDays(anchorFirstDue, cycleIndex * 7);
+            const days = scheduledDue ? diffInDays(scheduledDue, actual) : null;
+
+            if (days === null) {
+              diffText = "-";
+              diffCls = "muted";
+            } else {
+              dayDiffNum = days;
+              diffText = formatDiffLabel(days);
+              diffCls = days <= 0 ? "ok" : (days <= 2 ? "warn" : "err");
+            }
+
+            const extraFullCycles = instAmt > 0 ? Math.max(0, Math.floor(cycleAccumulated / instAmt) - 1) : 0;
+            const remainderInCycle = instAmt > 0 ? (cycleAccumulated % instAmt) : 0;
+
+            cycleIndex += 1 + extraFullCycles;
+            if (remainderInCycle > 0 && !alreadySettledBeforeThis && !isClosingPayment) {
+              cycleAccumulated = remainderInCycle;
+              cyclePartCount = 1;
+              cycleStarted = true;
+            } else {
+              cycleAccumulated = 0;
+              cyclePartCount = 0;
+              cycleStarted = false;
+            }
           }
-        } else if (alreadySettledBeforeThis || (isSameDayAsPrev && cycleIndex > 0 && amt < instAmt)) {
-          diffText = "Nil";
+        } else if (alreadySettledBeforeThis || (isSameDayAsPrev && cycleIndex > 0 && amt < instAmt && !isClosingPayment)) {
+          diffText = "NIL";
           diffCls = "muted";
+        } else if (instAmt > 0 && amt < instAmt && !isClosingPayment) {
+          cyclePartCount = 1;
+          cycleAccumulated = amt;
+          cycleStarted = true;
+          diffText = `PART (${cyclePartCount})`;
+          diffCls = "warn";
         } else {
           const scheduledDue = addDays(anchorFirstDue, cycleIndex * 7);
           const days = scheduledDue ? diffInDays(scheduledDue, actual) : null;
@@ -827,21 +973,26 @@
           if (days === null) {
             diffText = "-";
             diffCls = "muted";
-          } else if (days < 0 && alreadySettledBeforeThis) {
-            diffText = "Nil";
+          } else if (days < 0 && alreadySettledBeforeThis && !isClosingPayment) {
+            diffText = "NIL";
             diffCls = "muted";
           } else {
             dayDiffNum = days;
-            diffText = `${days} ${Math.abs(days) === 1 ? "Day" : "Days"}`;
+            diffText = formatDiffLabel(days);
             diffCls = days <= 0 ? "ok" : (days <= 2 ? "warn" : "err");
           }
 
-          if (instAmt > 0 && amt < instAmt) {
-            cycleAccumulated = amt;
+          const coveredCycles = instAmt > 0 ? Math.max(1, Math.floor(amt / instAmt)) : 1;
+          const remainder = instAmt > 0 ? (amt % instAmt) : 0;
+          cycleIndex += coveredCycles;
+
+          if (remainder > 0 && !alreadySettledBeforeThis && !isClosingPayment) {
+            cycleAccumulated = remainder;
+            cyclePartCount = 1;
             cycleStarted = true;
           } else {
-            cycleIndex += 1;
             cycleAccumulated = 0;
+            cyclePartCount = 0;
             cycleStarted = false;
           }
         }
@@ -875,7 +1026,6 @@
     function findNextLoanAfter(currentLoan, closeDate, allLoans) {
       const curDate = parseValidDate(currentLoan.loanDate);
       const curNum = parseInt(String(currentLoan.loanId || "").replace(/\D+/g, ""), 10) || 0;
-
       let earliestNext = null;
 
       allLoans.forEach(other => {
@@ -892,38 +1042,29 @@
         }
 
         if (isAfter) {
-          if (!earliestNext) {
-            earliestNext = { loan: other, date: otherDate };
-          } else if (earliestNext.date && otherDate && otherDate.getTime() < earliestNext.date.getTime()) {
+          if (!earliestNext || (earliestNext.date && otherDate && otherDate.getTime() < earliestNext.date.getTime())) {
             earliestNext = { loan: other, date: otherDate };
           }
         }
       });
 
       if (!earliestNext) return null;
-
-      let daysAfterClose = null;
-      if (closeDate && earliestNext.date) {
-        daysAfterClose = Math.round((earliestNext.date.getTime() - closeDate.getTime()) / MS_PER_DAY);
-      }
+      const daysAfterClose = (closeDate && earliestNext.date)
+        ? Math.round((earliestNext.date.getTime() - closeDate.getTime()) / MS_PER_DAY)
+        : null;
 
       return {
         loanId: earliestNext.loan.loanId,
         loanAmt: Number(earliestNext.loan.loanAmt) || 0,
-        loanDate: earliestNext.date,
-        daysAfterClose: daysAfterClose
+        daysAfterClose
       };
     }
 
     function evaluateLoanTenure(loan, allLoans) {
       const payments = loan.payments || [];
-      const rawEntryCount = payments.length;
-      const statusUpper = String(loan.status || "").trim().toUpperCase();
-      const isClosed = statusUpper === "CLOSED";
-
+      const isClosed = String(loan.status || "").trim().toUpperCase() === "CLOSED";
       const startDate = parseValidDate(loan.loanDate);
       const endDate = isClosed ? resolveLoanClosedDate(loan) : null;
-
       const discount = loan.earlyClosingDiscount && Number(loan.earlyClosingDiscount.amount) > 0
         ? loan.earlyClosingDiscount
         : null;
@@ -931,23 +1072,11 @@
       const daysSpan = (startDate && endDate)
         ? Math.max(0, Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_DAY))
         : null;
-
       const weeksSpan = daysSpan !== null ? Number((daysSpan / 7).toFixed(1)) : null;
       const activeWeeks = countDistinctPaymentWeeks(payments, startDate);
 
       if (!isClosed) {
-        return {
-          rawEntryCount,
-          activeWeeks,
-          weeksSpan,
-          daysSpan,
-          endDate,
-          discount,
-          isQuickHigherRenewal: false,
-          isOverStandard: false,
-          badgeHtml: "",
-          noteHtml: ""
-        };
+        return { activeWeeks, weeksSpan, daysSpan, discount, isQuickHigherRenewal: false, isOverStandard: false, badgeHtml: "" };
       }
 
       const maxAllowedDays = STANDARD_DAYS + BUFFER_DAYS;
@@ -955,50 +1084,27 @@
       const isEarlyClose = (daysSpan !== null && daysSpan < STANDARD_DAYS) || (activeWeeks > 0 && activeWeeks < STANDARD_INSTALLMENTS);
 
       const nextLoanInfo = findNextLoanAfter(loan, endDate, allLoans);
-      const currentLoanAmt = Number(loan.loanAmt) || 0;
       const takenWithin7Days = Boolean(
         nextLoanInfo &&
         nextLoanInfo.daysAfterClose !== null &&
         nextLoanInfo.daysAfterClose >= 0 &&
         nextLoanInfo.daysAfterClose <= QUICK_RENEWAL_MAX_DAYS
       );
-      const hasHigherAmount = Boolean(nextLoanInfo && nextLoanInfo.loanAmt > currentLoanAmt);
+      const hasHigherAmount = Boolean(nextLoanInfo && nextLoanInfo.loanAmt > (Number(loan.loanAmt) || 0));
       const isQuickHigherRenewal = Boolean(isEarlyClose && takenWithin7Days && hasHigherAmount);
 
-      const discountText = discount ? ` (Discount: ${fmtNum(discount.amount)})` : "";
-      const nextLoanGapText = nextLoanInfo
-        ? (nextLoanInfo.daysAfterClose !== null
-            ? `Next loan ${nextLoanInfo.loanId} (${fmtNum(nextLoanInfo.loanAmt)}) taken ${nextLoanInfo.daysAfterClose} Days after close`
-            : `Next loan ${nextLoanInfo.loanId} (${fmtNum(nextLoanInfo.loanAmt)}) taken`)
-        : "No follow-up loan";
-
       let badgeHtml = "";
-      let noteHtml = "";
-
       if (isQuickHigherRenewal) {
-        badgeHtml = `<span class="tag tag-red">Black Mark &bull; Early + Higher (&le;7 Days)</span>`;
-        noteHtml = `<div class="tenure-note early-bad">&#9888;&#65039; Early close (${weeksSpan ?? "-"} Wks / ${rawEntryCount} Pmts)${discountText} + ${nextLoanGapText} &mdash; Flagged.</div>`;
+        badgeHtml = `<span class="tag tag-red">BLACK MARK &bull; EARLY + HIGHER (&le;7D)</span>`;
       } else if (isEarlyClose) {
-        badgeHtml = `<span class="tag tag-pink">Early Close &bull; Good${discount ? " + Disc" : ""}</span>`;
+        badgeHtml = `<span class="tag tag-pink">EARLY CLOSE &bull; GOOD${discount ? " + DISC" : ""}</span>`;
       } else if (isOverStandard) {
-        badgeHtml = `<span class="tag tag-amber">Over Tenure (${weeksSpan ?? "-"} Wks)</span>`;
-        noteHtml = `<div class="tenure-note over">&#9888;&#65039; Past 10 Wks + 5 Days (${maxAllowedDays} Days): ${daysSpan ?? "-"} Days (${weeksSpan ?? "-"} Wks) across ${activeWeeks} Wks.</div>`;
+        badgeHtml = `<span class="tag tag-amber">OVER TENURE (${weeksSpan ?? "-"}W)</span>`;
       } else if (discount) {
-        badgeHtml = `<span class="tag tag-pink">Discount: ${fmtNum(discount.amount)}</span>`;
+        badgeHtml = `<span class="tag tag-pink">DISCOUNT: ${fmtNum(discount.amount)}</span>`;
       }
 
-      return {
-        rawEntryCount,
-        activeWeeks,
-        weeksSpan,
-        daysSpan,
-        endDate,
-        discount,
-        isQuickHigherRenewal,
-        isOverStandard,
-        badgeHtml,
-        noteHtml
-      };
+      return { activeWeeks, weeksSpan, daysSpan, discount, isQuickHigherRenewal, isOverStandard, badgeHtml };
     }
 
     function scorePaymentDayDiff(days) {
@@ -1011,11 +1117,10 @@
     function computeCustomerScore(customer, orderedLoans) {
       const isBlacklisted = String(customer.status || "").trim().toUpperCase().includes("BLACK");
       if (isBlacklisted) {
-        return { score: 0, rank: "D", rankLabel: "Black Listed" };
+        return { score: 0, rank: "D", badgeCls: "tag-rank-d", reason: "Black Listed" };
       }
-
       if (!orderedLoans.length) {
-        return { score: 65, rank: "B", rankLabel: "New" };
+        return { score: 65, rank: "B", badgeCls: "tag-rank-b", reason: "No loans yet" };
       }
 
       let totalPaymentPoints = 0;
@@ -1025,8 +1130,7 @@
 
       orderedLoans.forEach(loan => {
         const firstDue = resolveFirstCollectionDate(loan);
-        const rows = computePaymentRows(loan, firstDue);
-        rows.forEach(r => {
+        computePaymentRows(loan, firstDue).forEach(r => {
           if (typeof r.dayDiffNum === "number") {
             totalPaymentPoints += scorePaymentDayDiff(r.dayDiffNum);
             scoredPaymentsCount += 1;
@@ -1035,9 +1139,7 @@
 
         const tenure = evaluateLoanTenure(loan, orderedLoans);
         const isClosed = String(loan.status || "").trim().toUpperCase() === "CLOSED";
-        const pending = resolveLoanPendingBalance(loan);
-
-        if (isClosed && pending <= 0) loanAdjustments += 4;
+        if (isClosed && resolveLoanPendingBalance(loan) <= 0) loanAdjustments += 4;
         if (tenure.isOverStandard) loanAdjustments -= 8;
         if (tenure.isQuickHigherRenewal) {
           hasQuickHigherRenewal = true;
@@ -1047,22 +1149,24 @@
 
       const avgPts = scoredPaymentsCount > 0 ? totalPaymentPoints / scoredPaymentsCount : 2;
       const normalizedPaymentScore = Math.max(0, Math.min(65, ((avgPts + 1) / 6) * 65));
-
-      let rawScore = Math.round(25 + normalizedPaymentScore + loanAdjustments);
-      rawScore = Math.max(0, Math.min(100, rawScore));
-
+      let rawScore = Math.max(0, Math.min(100, Math.round(25 + normalizedPaymentScore + loanAdjustments)));
       if (hasQuickHigherRenewal && rawScore > 49) rawScore = 49;
 
-      let rank = "B", rankLabel = "Good";
-      if (rawScore >= 80) { rank = "A"; rankLabel = "Prime"; }
-      else if (rawScore >= 60) { rank = "B"; rankLabel = "Good"; }
-      else if (rawScore >= 40) { rank = "C"; rankLabel = "Caution"; }
-      else { rank = "D"; rankLabel = "Risk"; }
+      let rank = "B", badgeCls = "tag-rank-b";
+      if (rawScore >= 80) { rank = "A"; badgeCls = "tag-rank-a"; }
+      else if (rawScore >= 60) { rank = "B"; badgeCls = "tag-rank-b"; }
+      else if (rawScore >= 40) { rank = "C"; badgeCls = "tag-rank-c"; }
+      else { rank = "D"; badgeCls = "tag-rank-d"; }
 
-      return { score: rawScore, rank, rankLabel };
+      return {
+        score: rawScore,
+        rank,
+        badgeCls,
+        reason: scoredPaymentsCount > 0 ? `Avg ${avgPts.toFixed(1)} pts (${scoredPaymentsCount} pmts)` : "Loan history"
+      };
     }
 
-    function applyLookupData(data) {
+    function applyLookupData(data, queryText) {
       const statusEl = document.getElementById("status");
       const outEl = document.getElementById("output");
 
@@ -1070,13 +1174,12 @@
         statusEl.innerHTML = `<span class="err">${esc(data.error || "Unknown error")}</span>`;
         return;
       }
-
       if (!data.found) {
         statusEl.innerHTML = `<span class="warn">No matching records found.</span>`;
         outEl.innerHTML = "";
+        try { sessionStorage.removeItem(LAST_RESULT_KEY); } catch (e) {}
         return;
       }
-
       if (data.multipleCustomers && Array.isArray(data.matches)) {
         statusEl.innerHTML = `<span class="info">${data.matches.length} matches found &mdash; select one:</span>`;
         renderCustomerMatches(data.matches);
@@ -1086,15 +1189,18 @@
       const c = data.customer || {};
       statusEl.innerHTML = `<span class="ok">${esc(c.borrowerName || "")} (${esc(c.custId || "")})</span>`;
       renderLookup(data);
+
+      try {
+        sessionStorage.setItem(LAST_RESULT_KEY, JSON.stringify({ q: queryText || "", data }));
+      } catch (e) {}
     }
 
-    async function fetchLookup(queryParams, statusMessage) {
+    async function fetchLookup(queryParams, statusMessage, queryText) {
       const statusEl = document.getElementById("status");
       const outEl = document.getElementById("output");
-      const cacheKey = queryParams;
 
-      if (lookupCache.has(cacheKey)) {
-        applyLookupData(lookupCache.get(cacheKey));
+      if (lookupCache.has(queryParams)) {
+        applyLookupData(lookupCache.get(queryParams), queryText);
         return;
       }
 
@@ -1102,11 +1208,10 @@
       outEl.innerHTML = "";
 
       try {
-        const url = `${WEB_APP_URL}?action=lookup&${queryParams}`;
-        const res = await fetch(url);
+        const res = await fetch(`${WEB_APP_URL}?action=lookup&${queryParams}`);
         const data = await res.json();
-        if (data && data.ok) lookupCache.set(cacheKey, data);
-        applyLookupData(data);
+        if (data && data.ok) lookupCache.set(queryParams, data);
+        applyLookupData(data, queryText);
       } catch (err) {
         statusEl.innerHTML = '<span class="err">Connection error.</span>';
       }
@@ -1124,14 +1229,14 @@
 
       if (parsed.type === "loan") {
         inputEl.value = parsed.value;
-        fetchLookup(`loanId=${encodeURIComponent(parsed.value)}`, `Loading ${parsed.value}...`);
+        fetchLookup(`loanId=${encodeURIComponent(parsed.value)}`, `Loading ${parsed.value}...`, parsed.value);
       } else {
-        fetchLookup(`custName=${encodeURIComponent(parsed.value)}`, `Searching "${parsed.value}"...`);
+        fetchLookup(`custName=${encodeURIComponent(parsed.value)}`, `Searching "${parsed.value}"...`, parsed.value);
       }
     }
 
     function selectCustomerById(custId) {
-      fetchLookup(`custId=${encodeURIComponent(custId)}`, `Loading ${custId}...`);
+      fetchLookup(`custId=${encodeURIComponent(custId)}`, `Loading ${custId}...`, custId);
     }
 
     function renderCustomerMatches(matches) {
@@ -1161,9 +1266,18 @@
 
     function renderLookup(data) {
       const c = data.customer || {};
+      const s = data.summary || {};
       const chronologicalLoans = sortLoansChronologically(data.loans || []);
       const scoreInfo = computeCustomerScore(c, chronologicalLoans);
+
       const isBlacklisted = String(c.status || "").trim().toUpperCase().includes("BLACK");
+      const activeCount = chronologicalLoans.filter(l => String(l.status || "").trim().toUpperCase() !== "CLOSED").length;
+      const closedCount = chronologicalLoans.length - activeCount;
+
+      const totalGiven = Number(s.totalLoanGiven) || chronologicalLoans.reduce((sum, l) => sum + (Number(l.loanAmt) || 0), 0);
+      const totalReceived = Number(s.totalReceived) || chronologicalLoans.reduce((sum, l) => sum + (Number(l.totalReceived) || 0), 0);
+      const computedLoanPendingSum = chronologicalLoans.reduce((sum, l) => sum + resolveLoanPendingBalance(l), 0);
+      const totalPending = (Number(s.totalPending) > 0) ? Number(s.totalPending) : computedLoanPendingSum;
 
       const rawPhone = String(c.phoneNum || "").trim();
       const rawWa = String(c.waNumber || "").trim();
@@ -1177,40 +1291,71 @@
         : `<span class="contact-static">&#128222; ${esc(rawPhone || "-")}</span>`;
 
       const waChip = waHref
-        ? `<a class="contact-link wa-link" href="${esc(waHref)}" target="_blank" rel="noopener">&#128172; ${hasDistinctWa ? `WA: ${esc(rawWa)}` : `WA: ${esc(waTargetNum)}`}</a>`
+        ? `<a class="contact-link wa-link" href="${esc(waHref)}" target="_blank" rel="noopener">&#128172; ${hasDistinctWa ? `WA: ${esc(rawWa)}` : `WhatsApp: ${esc(waTargetNum)}`}</a>`
         : `<span class="contact-static">&#128172; -</span>`;
 
       let html = `
         <div class="card customer-card ${isBlacklisted ? "blacklisted" : ""}">
           ${isBlacklisted ? `<div class="blacklist-banner">&#128683; BLACK LISTED</div>` : ""}
 
-          <div class="customer-hero">
-            <div class="customer-hero-main">
-              <h2 class="customer-name-large">
-                ${esc(c.borrowerName || "-")}
-                ${c.nickName ? `<span class="customer-nickname-inline">(${esc(c.nickName)})</span>` : ""}
+          <div class="customer-top-row">
+            <div class="customer-title-block">
+              <h2 class="customer-name">
+                <span>&#128100; ${esc(c.borrowerName || "-")}</span>
+                ${c.custId ? `<span class="cust-id-inline">${esc(c.custId)}</span>` : ""}
               </h2>
-              <div class="customer-contact-line">
-                ${phoneChip}
-                ${waChip}
-              </div>
-              <div class="customer-address-large">&#128205; ${esc(buildAddress(c))}</div>
+              ${c.nickName ? `<span class="customer-nick">(${esc(c.nickName)})</span>` : ""}
             </div>
 
-            <div class="intro-kpi-box">
-              <div class="intro-kpi-lbl">Introduced By</div>
-              <div class="intro-kpi-val">${esc(c.guarantorName || "-")}</div>
+            <div class="kpi-box intro-kpi-box">
+              <div class="kpi-lbl">Introduced By</div>
+              <div class="kpi-val">${esc(c.guarantorName || "-")}</div>
             </div>
           </div>
 
-          <div class="customer-meta-strip">
-            <span>Cust ID: <strong>${esc(c.custId || "-")}</strong></span>
-            <span class="meta-dot">&bull;</span>
-            <span>Join Date: <strong>${esc(fmtDate(c.joinDate))}</strong></span>
-            <span class="meta-dot">&bull;</span>
-            <span>Rank: <strong>${esc(scoreInfo.rank)} ${esc(scoreInfo.rankLabel)}</strong></span>
-            <span class="meta-dot">&bull;</span>
-            <span>Score: <strong>${scoreInfo.score}/100</strong></span>
+          <div class="customer-sub-block">
+            <div class="contact-row">
+              ${phoneChip}
+              ${waChip}
+            </div>
+            <div class="customer-address">&#128205; ${esc(buildAddress(c))}</div>
+            <div class="customer-badges-row">
+              <span class="tag ${scoreInfo.badgeCls}">SCORE ${scoreInfo.score} &bull; ${scoreInfo.rank}</span>
+              <span class="tag tag-active">ACTIVE: ${activeCount}</span>
+              <span class="tag tag-closed">CLOSED: ${closedCount}</span>
+            </div>
+          </div>
+
+          <div class="kpi-strip">
+            <div class="kpi-box">
+              <div class="kpi-lbl">Loans</div>
+              <div class="kpi-val">${esc(s.totalLoans ?? chronologicalLoans.length)}</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-lbl">Loan Given</div>
+              <div class="kpi-val info">${fmtNum(totalGiven)}</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-lbl">Collected</div>
+              <div class="kpi-val ok">${fmtNum(totalReceived)}</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-lbl">Pending</div>
+              <div class="kpi-val ${totalPending > 0 ? "err" : "ok"}">${fmtNum(totalPending)}</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-lbl">Status</div>
+              <div class="kpi-val ${isBlacklisted ? "err" : "ok"}">${esc(c.status || "-")}</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-lbl">Join Date</div>
+              <div class="kpi-val">${esc(fmtDate(c.joinDate))}</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="lbl">Score Basis</div>
+            <div class="val">${esc(scoreInfo.reason)}</div>
           </div>
         </div>
       `;
@@ -1222,14 +1367,14 @@
       displayLoans.forEach(({ loan, loanSequenceNum }) => {
         const payments = loan.payments || [];
         const tenure = evaluateLoanTenure(loan, chronologicalLoans);
-        const statusUpper = String(loan.status || "").trim().toUpperCase();
-        const isLoanClosed = statusUpper === "CLOSED";
+        const isLoanClosed = String(loan.status || "").trim().toUpperCase() === "CLOSED";
         const safeLoanId = domIdSafe(`${loan.loanId}_${loanSequenceNum}`);
         const firstDueDate = resolveFirstCollectionDate(loan);
         const expectedCloseDate = resolveExpectedCloseDate(loan, firstDueDate);
         const closedDate = isLoanClosed ? resolveLoanClosedDate(loan) : null;
         const latestPayDate = resolveLatestPaymentDate(payments);
         const loanPending = resolveLoanPendingBalance(loan);
+        const modeBreakdown = summarizePaymentModes(payments);
         const computedRows = computePaymentRows(loan, firstDueDate);
         const guarantorDisplay = loan.guarantorName || c.guarantorName || "-";
 
@@ -1243,50 +1388,54 @@
                 <td>${esc(r.remarks || "-")}</td>
               </tr>
             `).join("")
-          : `<tr><td colspan="5" style="color:var(--text-muted);">No payments.</td></tr>`;
+          : `<tr><td colspan="5" class="lbl">No payments.</td></tr>`;
 
         const loanShadeClass = isLoanClosed ? "loan-closed" : "loan-active";
         const statusTagClass = isLoanClosed ? "tag-closed" : "tag-active";
         const extraCardClasses = [loanShadeClass, loan.isSearchedLoan ? "highlight" : ""].filter(Boolean).join(" ");
         const loanBadgeLabel = data.searchedByLoan
-          ? (loan.isSearchedLoan ? "Searched" : "Other Loan")
-          : "Loan";
+          ? (loan.isSearchedLoan ? "SEARCHED" : "OTHER LOAN")
+          : "LOAN";
 
-        const eighthBoxHtml = isLoanClosed
+        const sixthBoxHtml = isLoanClosed
           ? `
-            <div class="kpi-box">
-              <div class="kpi-lbl">Closed On</div>
-              <div class="kpi-val">${esc(fmtDateWithDay(closedDate))}</div>
+            <div class="kpi-box featured-date">
+              <div class="kpi-lbl">Closed On${esc(getDayTag(closedDate))}</div>
+              <div class="kpi-val">${esc(fmtDate(closedDate))}</div>
             </div>
           `
           : `
-            <div class="kpi-box">
-              <div class="kpi-lbl">Next Due</div>
-              <div class="kpi-val">${esc(fmtDateWithDay(loan.nextColDate))}</div>
+            <div class="kpi-box featured-date">
+              <div class="kpi-lbl">Next Due${esc(getDayTag(loan.nextColDate))}</div>
+              <div class="kpi-val">${esc(fmtDate(loan.nextColDate))}</div>
             </div>
           `;
 
-        const metaLineHtml = isLoanClosed
-          ? `
-            <div class="loan-meta-line">
-              <span>Expected Close: <strong>${esc(fmtDateWithDay(expectedCloseDate))}</strong></span>
-              <span class="meta-dot">&bull;</span>
-              <span>Closed On: <strong>${esc(fmtDateWithDay(closedDate))}</strong></span>
-              ${tenure.discount ? `<span class="meta-dot">&bull;</span><span>Discount: <strong>${fmtNum(tenure.discount.amount)}</strong></span>` : ""}
-            </div>
-          `
+        const secondaryMetaHtml = isLoanClosed
+          ? (tenure.discount
+              ? `
+                <div><div class="lbl">Instalment</div><div class="val">${fmtNum(loan.instalmentAmt)}</div></div>
+                <div><div class="lbl">Duration</div><div class="val">${tenure.weeksSpan !== null ? `${tenure.weeksSpan}W (${tenure.daysSpan}D)` : "-"}</div></div>
+                <div><div class="lbl">Modes</div><div class="val">${esc(modeBreakdown)}</div></div>
+                <div><div class="lbl">Discount</div><div class="val">${fmtNum(tenure.discount.amount)}</div></div>
+              `
+              : `
+                <div><div class="lbl">Instalment</div><div class="val">${fmtNum(loan.instalmentAmt)}</div></div>
+                <div><div class="lbl">Duration</div><div class="val">${tenure.weeksSpan !== null ? `${tenure.weeksSpan}W (${tenure.daysSpan}D)` : "-"}</div></div>
+                <div><div class="lbl">Modes</div><div class="val">${esc(modeBreakdown)}</div></div>
+                <div><div class="lbl">Last Collection</div><div class="val">${esc(fmtDate(latestPayDate))}</div></div>
+              `)
           : `
-            <div class="loan-meta-line">
-              <span>Expected Close: <strong>${esc(fmtDateWithDay(expectedCloseDate))}</strong></span>
-              <span class="meta-dot">&bull;</span>
-              <span>Last Collection: <strong>${esc(fmtDateWithDay(latestPayDate))}</strong></span>
-            </div>
-          `;
+              <div><div class="lbl">Instalment</div><div class="val">${fmtNum(loan.instalmentAmt)}</div></div>
+              <div><div class="lbl">Duration</div><div class="val">${tenure.weeksSpan !== null ? `${tenure.weeksSpan}W (${tenure.daysSpan}D)` : "-"}</div></div>
+              <div><div class="lbl">Modes</div><div class="val">${esc(modeBreakdown)}</div></div>
+              <div><div class="lbl">Last Collection</div><div class="val">${esc(fmtDate(latestPayDate))}</div></div>
+            `;
 
         html += `
           <div class="card ${extraCardClasses}">
             <div class="card-top">
-              <h2 class="card-title">#${loanSequenceNum} ${esc(loan.loanId || "-")}</h2>
+              <h2 class="card-title">&#128179; #${loanSequenceNum} ${esc(loan.loanId || "-")}</h2>
               <div class="badges">
                 <span class="tag tag-seq">${loanSequenceNum}/${chronologicalLoans.length}</span>
                 <span class="tag ${statusTagClass}">${esc(loan.status || (isLoanClosed ? "CLOSED" : "ACTIVE"))}</span>
@@ -1295,18 +1444,14 @@
               </div>
             </div>
 
-            <div class="loan-kpi-grid-8">
+            <div class="loan-kpi-grid">
               <div class="kpi-box">
                 <div class="kpi-lbl">Loan Amount</div>
-                <div class="kpi-val">${fmtNum(loan.loanAmt)}</div>
+                <div class="kpi-val info">${fmtNum(loan.loanAmt)}</div>
               </div>
               <div class="kpi-box">
-                <div class="kpi-lbl">Loan Date</div>
-                <div class="kpi-val">${esc(fmtDateWithDay(loan.loanDate))}</div>
-              </div>
-              <div class="kpi-box">
-                <div class="kpi-lbl">1st Due</div>
-                <div class="kpi-val">${esc(fmtDateWithDay(firstDueDate))}</div>
+                <div class="kpi-lbl">Loan Date${esc(getDayTag(loan.loanDate))}</div>
+                <div class="kpi-val">${esc(fmtDate(loan.loanDate))}</div>
               </div>
               <div class="kpi-box">
                 <div class="kpi-lbl">Guarantor</div>
@@ -1314,26 +1459,41 @@
               </div>
 
               <div class="kpi-box">
-                <div class="kpi-lbl">Collected</div>
-                <div class="kpi-val">${fmtNum(loan.totalReceived)}</div>
+                <div class="kpi-lbl">1st Due${esc(getDayTag(firstDueDate))}</div>
+                <div class="kpi-val">${esc(fmtDate(firstDueDate))}</div>
               </div>
               <div class="kpi-box">
-                <div class="kpi-lbl">Pending</div>
-                <div class="kpi-val">${fmtNum(loanPending)}</div>
+                <div class="kpi-lbl">Expected Close${esc(getDayTag(expectedCloseDate))}</div>
+                <div class="kpi-val">${esc(fmtDate(expectedCloseDate))}</div>
+              </div>
+              ${sixthBoxHtml}
+
+              <div class="kpi-box">
+                <div class="kpi-lbl">Total Collected</div>
+                <div class="kpi-val ok">${fmtNum(loan.totalReceived)}</div>
+              </div>
+              <div class="kpi-box">
+                <div class="kpi-lbl">Pending Amount</div>
+                <div class="kpi-val ${loanPending > 0 ? "err" : "ok"}">${fmtNum(loanPending)}</div>
               </div>
               <div class="kpi-box">
                 <div class="kpi-lbl">Paid Weeks</div>
-                <div class="kpi-val">${tenure.activeWeeks} / ${STANDARD_WEEKS} Wks</div>
+                <div class="kpi-val">${tenure.activeWeeks} / ${STANDARD_WEEKS} WKS</div>
               </div>
-              ${eighthBoxHtml}
             </div>
 
-            ${metaLineHtml}
-            ${tenure.noteHtml}
+            <div class="meta-grid-2">
+              ${secondaryMetaHtml}
+            </div>
 
-            <div class="collections-bar" onclick="togglePayments('${safeLoanId}')">
-              <span class="collections-title"><span id="toggle-arrow-${safeLoanId}">&#9662;</span> Collections History (${payments.length})</span>
-              <span class="collections-action" id="toggle-label-${safeLoanId}">[+ Expand]</span>
+            <div class="collections-header">
+              <span class="collections-title">&#129534; Collections History (${payments.length})</span>
+              <button
+                type="button"
+                class="toggle-btn"
+                id="toggle-btn-${safeLoanId}"
+                onclick="togglePayments('${safeLoanId}')"
+              >&#9656; Expand</button>
             </div>
 
             <div class="payments-wrap collapsed" id="payments-wrap-${safeLoanId}">
@@ -1368,6 +1528,14 @@
     if (initialParam) {
       searchInputEl.value = initialParam;
       smartLookup();
+    } else {
+      try {
+        const cachedSession = JSON.parse(sessionStorage.getItem(LAST_RESULT_KEY) || "null");
+        if (cachedSession && cachedSession.data && cachedSession.data.ok) {
+          if (cachedSession.q) searchInputEl.value = cachedSession.q;
+          applyLookupData(cachedSession.data, cachedSession.q);
+        }
+      } catch (e) {}
     }
   </script>
 </body>
