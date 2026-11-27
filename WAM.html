@@ -4,31 +4,49 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WhatsApp Reminders - Starway</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <script src="auth.js"></script>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #15191e;
-      color: #ffffff;
-      margin: 0;
-      padding: 20px 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      min-height: 100vh;
+    :root {
+      --bg-page: #15191e;
+      --bg-card: #1e232a;
+      --bg-elevated: #242b33;
+      --border-subtle: #2b323b;
+      --accent: #00bcd4;
+      --accent-hover: #38bdf8;
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --wa-green: #25d366;
+      --wa-green-hover: #4ade80;
+      --danger: #f43f5e;
+      --page-max-width: 480px;
+    }
+
+    * {
       box-sizing: border-box;
     }
 
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      margin: 0;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      min-height: 100vh;
+    }
+
     .card {
-      background-color: #1e232a;
-      padding: 20px;
+      background-color: var(--bg-card);
+      padding: 24px;
       border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       width: 100%;
-      max-width: 520px;
-      border: 1px solid #2b323b;
-      box-sizing: border-box;
+      max-width: var(--page-max-width);
+      border: 1px solid var(--border-subtle);
     }
 
     .top-bar {
@@ -37,39 +55,46 @@
       justify-content: space-between;
       margin-bottom: 16px;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .home-btn {
-      padding: 12px 18px;
-      background-color: #2d3343;
-      color: #94a3b8;
-      border: 1px solid #475569;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      padding: 10px 16px;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .home-btn:hover {
-      background-color: #374151;
-      color: #f8fafc;
+      background-color: var(--bg-elevated);
+      color: var(--accent-hover);
+      border-color: var(--accent);
     }
 
     .home-btn:active {
-      transform: translateY(1px) scale(0.99);
+      transform: translateY(1px);
     }
 
     .refresh-btn {
-      padding: 12px 14px;
-      background-color: #15191e;
-      color: #00bcd4;
-      border: 1px solid #2b323b;
-      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background-color: var(--bg-page);
+      color: var(--accent);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
@@ -77,21 +102,20 @@
     }
 
     .refresh-btn:hover {
-      background-color: #242b33;
-      border-color: #00bcd4;
-      color: #38bdf8;
+      background-color: var(--bg-elevated);
+      border-color: var(--accent);
+      color: var(--accent-hover);
     }
 
     h2 {
       margin: 0 0 14px 0;
-      color: #00bcd4;
+      color: var(--accent);
       text-align: center;
-      font-size: 21px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.5px;
     }
 
-    /* Filter Chips */
     .filter-row {
       display: flex;
       gap: 6px;
@@ -101,9 +125,9 @@
     }
 
     .chip {
-      background-color: #15191e;
-      color: #94a3b8;
-      border: 1px solid #2b323b;
+      background-color: var(--bg-page);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
       border-radius: 20px;
       padding: 6px 12px;
       font-size: 12px;
@@ -114,48 +138,54 @@
     }
 
     .chip:hover {
-      border-color: #00bcd4;
-      color: #38bdf8;
+      background-color: var(--bg-elevated);
+      border-color: var(--accent);
+      color: var(--accent-hover);
     }
 
     .chip.active {
-      background-color: #00bcd4;
-      color: #0f172a;
-      border-color: #00bcd4;
+      background-color: var(--accent);
+      color: #0b1320;
+      border-color: var(--accent);
     }
 
     .search-input {
       width: 100%;
-      padding: 11px 12px;
-      border: 1px solid #2b323b;
-      background-color: #15191e;
-      color: #ffffff;
+      padding: 10px 12px;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-page);
+      color: var(--text-main);
       border-radius: 10px;
-      box-sizing: border-box;
       font-size: 14px;
       margin-bottom: 14px;
     }
 
+    .search-input::placeholder {
+      color: #64748b;
+    }
+
     .search-input:focus {
-      border-color: #00bcd4;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
       outline: none;
     }
 
-    /* Legend Strip */
     .legend {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       justify-content: center;
-      font-size: 11px;
-      color: #94a3b8;
+      font-size: 11.5px;
+      color: var(--text-muted);
       margin-bottom: 14px;
     }
+
     .legend span {
       display: inline-flex;
       align-items: center;
       gap: 5px;
     }
+
     .dot {
       width: 10px;
       height: 10px;
@@ -163,7 +193,6 @@
       display: inline-block;
     }
 
-    /* Loan Rows: Option B layout on Starway Menu Palette (#15191e / #1e232a / #2b323b) */
     .wa-list {
       display: flex;
       flex-direction: column;
@@ -177,32 +206,32 @@
       gap: 10px;
       padding: 13px;
       border-radius: 12px;
-      background-color: #15191e;
-      border: 1px solid #2b323b;
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-subtle);
     }
 
-    /* 1. Due Today: Deep Cyan-Slate fill + Starway Cyan border */
     .wa-row.TODAY {
       background-color: #102a33;
-      border: 1.5px solid #00bcd4;
+      border: 1.5px solid var(--accent);
       color: #cffafe;
     }
+
     .wa-row.TODAY .row-sub { color: #a5f3fc; }
 
-    /* 2. Due Tomorrow: Warm Dark Amber fill + Yellow border */
     .wa-row.TOMORROW {
       background-color: #524014;
       border: 1.5px solid #eab308;
       color: #fef9c3;
     }
+
     .wa-row.TOMORROW .row-sub { color: #fef08a; }
 
-    /* 3. Overdue: Deep Crimson-Slate fill + Coral-Red border & bright coral text */
     .wa-row.OVERDUE {
-      background-color: #231317;
-      border: 1.5px solid #f43f5e;
+      background-color: #26161a;
+      border: 1.5px solid var(--danger);
       color: #fb7185;
     }
+
     .wa-row.OVERDUE .row-sub { color: #fda4af; }
 
     .row-main {
@@ -234,13 +263,14 @@
       text-transform: uppercase;
       letter-spacing: 0.35px;
     }
-    .pill-TODAY { background: #00bcd4; color: #0f172a; }
+
+    .pill-TODAY { background: var(--accent); color: #0b1320; }
     .pill-TOMORROW { background: #eab308; color: #18181b; }
-    .pill-OVERDUE { background: #f43f5e; color: #ffffff; }
+    .pill-OVERDUE { background: var(--danger); color: #ffffff; }
 
     .row-sub {
       font-size: 12px;
-      color: #94a3b8;
+      color: var(--text-muted);
       margin-top: 4px;
     }
 
@@ -252,17 +282,23 @@
     }
 
     .preview-btn {
-      background: #15191e;
+      background: var(--bg-card);
       color: inherit;
-      border: 1px solid #2b323b;
+      border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 7px 9px;
       font-size: 12px;
       cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preview-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--accent);
     }
 
     .send-wa-btn {
-      background-color: #25D366;
+      background-color: var(--wa-green);
       color: #091e12;
       font-size: 12px;
       font-weight: 800;
@@ -273,16 +309,22 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      transition: background 0.2s ease;
+    }
+
+    .send-wa-btn:hover {
+      background-color: var(--wa-green-hover);
     }
 
     .send-wa-btn.blank-chat {
-      background-color: #1e232a;
-      color: #25D366;
-      border: 1px solid #2b323b;
+      background-color: var(--bg-card);
+      color: var(--wa-green);
+      border: 1px solid var(--border-subtle);
     }
 
     .send-wa-btn.blank-chat:hover {
-      border-color: #25D366;
+      background-color: var(--bg-elevated);
+      border-color: var(--wa-green);
     }
 
     .send-wa-btn.sent {
@@ -292,18 +334,17 @@
     }
 
     .send-wa-btn.disabled {
-      background-color: #2b323b;
+      background-color: var(--bg-elevated);
       color: #64748b;
       border: none;
       pointer-events: none;
     }
 
-    /* Message Preview Box (expandable per row) */
     .msg-preview-drawer {
       display: none;
       margin-top: 8px;
       padding: 8px 10px;
-      background: rgba(15, 20, 25, 0.7);
+      background: rgba(15, 20, 25, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 8px;
       font-size: 12px;
@@ -311,20 +352,20 @@
       color: #f1f5f9;
       white-space: pre-line;
     }
+
     .msg-preview-drawer.open {
       display: block;
     }
 
-    /* Expandable Card 2: Other Active Loans (Not Due Yet) */
     .collapsible-card {
-      padding: 16px 20px;
+      padding: 18px 24px;
     }
 
     .collapse-header {
       width: 100%;
       background: none;
       border: none;
-      color: #ffffff;
+      color: var(--text-main);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -339,13 +380,13 @@
       gap: 8px;
       font-size: 14px;
       font-weight: 700;
-      color: #00bcd4;
+      color: var(--accent);
     }
 
     .count-badge {
-      background-color: #15191e;
-      color: #94a3b8;
-      border: 1px solid #2b323b;
+      background-color: var(--bg-page);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
       font-size: 12px;
       font-weight: 700;
       padding: 2px 8px;
@@ -354,14 +395,14 @@
 
     .chevron {
       font-size: 13px;
-      color: #00bcd4;
+      color: var(--accent);
     }
 
     .collapsible-body {
       display: none;
       margin-top: 14px;
       padding-top: 12px;
-      border-top: 1px solid #2b323b;
+      border-top: 1px solid var(--border-subtle);
     }
 
     .collapsible-body.open {
@@ -371,17 +412,22 @@
     .state-msg {
       text-align: center;
       padding: 22px 10px;
-      color: #94a3b8;
+      color: var(--text-muted);
       font-size: 14px;
+    }
+
+    @media (max-width: 460px) {
+      body { padding: 16px 12px; }
+      .card { padding: 18px; }
+      .collapsible-card { padding: 16px 18px; }
     }
   </style>
 </head>
 <body>
 
-<!-- CARD 1: ACTIONABLE REMINDERS (DUE TODAY -> DUE TOMORROW -> OVERDUE) -->
 <div class="card">
   <div class="top-bar">
-    <button type="button" class="home-btn" onclick="window.location.href='index.html'">&#127968; Home Dashboard</button>
+    <a class="home-btn" href="index.html">&#127968; Home Dashboard</a>
     <button type="button" class="refresh-btn" onclick="fetchWaList(true)">&#8635; Refresh</button>
   </div>
 
@@ -407,7 +453,6 @@
   </div>
 </div>
 
-<!-- CARD 2: OTHER ACTIVE LOANS (NOT DUE YET - COLLAPSED BY DEFAULT) -->
 <div class="card collapsible-card">
   <button type="button" class="collapse-header" onclick="toggleOtherCard()">
     <span class="collapse-title-wrap">
@@ -466,7 +511,6 @@
     if (el) el.classList.toggle("open");
   }
 
-  // Builds WhatsApp URL; if message is empty/null, opens chat with blank body
   function buildWaUrl(mobile, message) {
     const digits = String(mobile || "").replace(/\D/g, "");
     if (!digits) return "#";
@@ -502,7 +546,6 @@
     const dueContainer = document.getElementById("dueList");
     const otherContainer = document.getElementById("otherList");
 
-    // 1. Card 1: Actionable Reminders sorted Due Today -> Due Tomorrow -> Overdue
     const dueFiltered = allItems
       .filter(item => item.category === "TODAY" || item.category === "TOMORROW" || item.category === "OVERDUE")
       .filter(item => {
@@ -564,7 +607,6 @@
       }).join("");
     }
 
-    // 2. Card 2: Other Active Loans (Not Due Yet) -> Blank WhatsApp body
     const otherFiltered = allItems
       .filter(item => item.category === "ACTIVE")
       .filter(item => {

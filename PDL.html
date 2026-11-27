@@ -4,65 +4,75 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payment Due List</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <script src="auth.js"></script>
   <style>
     :root {
-      --bg-color: #1e2026;
-      --card-bg: #282a36;
-      --accent-color: #38bdf8;
-      --text-main: #f8f8f2;
+      --bg-page: #15191e;
+      --bg-card: #1e232a;
+      --bg-elevated: #242b33;
+      --border-subtle: #2b323b;
+      --accent: #00bcd4;
+      --accent-hover: #38bdf8;
+      --text-main: #ffffff;
       --text-muted: #94a3b8;
-      --border-color: #3b3e4a;
-      --table-header-bg: #1f2937;
-      --row-hover-bg: #333644;
-      --banner-bg: #111827;
+      --table-header-bg: #192028;
+      --banner-bg: #15191e;
+      --danger: #f43f5e;
+      --page-max-width: 480px;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      background-color: var(--bg-color);
+      background-color: var(--bg-page);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 24px 16px;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
 
     .container {
       width: 100%;
-      max-width: 480px; /* Matched to the Payment Collection card width */
-      background-color: var(--card-bg);
-      border-radius: 12px;
+      max-width: var(--page-max-width);
+      background-color: var(--bg-card);
+      border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      border: 1px solid var(--border-color);
-      box-sizing: border-box;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
     }
 
-    /* Home Button Styles */
     .home-btn-container {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .home-btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       padding: 10px 16px;
-      background-color: #2b3548;
-      color: #94a3b8;
-      border: 1px solid #3b475d;
-      border-radius: 6px;
-      font-size: 15px;
-      font-weight: 600;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
+      text-decoration: none;
     }
 
     .home-btn:hover {
-      background-color: #374151;
-      color: #f8fafc;
-      border-color: var(--accent-color);
+      background-color: var(--bg-elevated);
+      color: var(--accent-hover);
+      border-color: var(--accent);
     }
 
     .home-btn:active {
@@ -70,57 +80,67 @@
     }
 
     .header-title {
-      color: var(--accent-color);
-      font-size: 22px;
+      color: var(--accent);
+      font-size: 20px;
       font-weight: 700;
       margin-bottom: 20px;
+      text-align: center;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
     }
 
     .section-banner {
       background-color: var(--banner-bg);
-      color: #ffffff;
-      padding: 8px 12px;
+      color: var(--text-main);
+      padding: 9px 12px;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12.5px;
       letter-spacing: 0.5px;
-      border-left: 4px solid var(--accent-color);
-      margin-top: 24px;
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--accent);
+      margin-top: 20px;
       margin-bottom: 8px;
-      border-radius: 4px;
+      border-radius: 8px;
     }
 
     .table-container {
       overflow-x: auto;
       margin-bottom: 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
     }
 
     table {
       width: 100%;
-      white-space: nowrap; /* Keeps columns neatly formatted */
+      white-space: nowrap;
       border-collapse: collapse;
       font-size: 13px;
+      background-color: var(--bg-page);
     }
 
     th {
       background-color: var(--table-header-bg);
-      color: var(--accent-color);
+      color: var(--accent);
       text-align: left;
       padding: 10px;
-      font-weight: 600;
-      border-bottom: 2px solid var(--border-color);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     td {
       padding: 10px;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-subtle);
       color: var(--text-main);
     }
 
-    tr:hover {
-      background-color: var(--row-hover-bg);
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: var(--bg-elevated);
     }
 
     .text-right {
@@ -133,24 +153,26 @@
       color: var(--text-muted);
       font-style: italic;
     }
+
+    @media (max-width: 460px) {
+      body { padding: 16px 12px; }
+      .container { padding: 18px; }
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- Home Button inside the Card -->
   <div class="home-btn-container">
-    <button type="button" class="home-btn" onclick="window.location.href='index.html'">
-      🏠 Home Dashboard
-    </button>
+    <a class="home-btn" href="index.html">
+      &#127968; Home Dashboard
+    </a>
   </div>
 
-  <!-- Main Card Header -->
   <div class="header-title">
-    💳 Payment Due List
+    &#128179; Payment Due List
   </div>
 
-  <!-- Dynamic Content -->
   <div id="due-content">
     <div class="loading">Loading active payment dues from database...</div>
   </div>
@@ -168,7 +190,7 @@
     } catch (error) {
       console.error(error);
       document.getElementById('due-content').innerHTML = `
-        <div style="color: #ef4444; text-align: center; padding: 20px;">
+        <div style="color: var(--danger); text-align: center; padding: 20px;">
           Failed to load live data. Please check connection.
         </div>`;
     }
@@ -189,7 +211,6 @@
     rows.forEach(row => {
       const firstCell = row[0] ? String(row[0]).trim() : '';
 
-      // Section Banners
       if (!row[1] && !row[2] && !row[3] && !row[4] && firstCell && !firstCell.toLowerCase().includes('no ')) {
         if (currentTableOpen) {
           html += `</tbody></table></div>`;
@@ -199,7 +220,6 @@
         return;
       }
 
-      // Table Headers
       if (firstCell.toLowerCase() === 'borrower name') {
         if (currentTableOpen) {
           html += `</tbody></table></div>`;
@@ -222,7 +242,6 @@
         return;
       }
 
-      // Data Rows
       if (currentTableOpen) {
         if (!row[1] && !row[2] && !row[3] && !row[4]) {
           html += `
@@ -254,7 +273,7 @@
   }
 
   loadPaymentDues();
-  setInterval(loadPaymentDues, 300000); // Auto-refresh every 5 mins
+  setInterval(loadPaymentDues, 300000);
 </script>
 
 </body>
